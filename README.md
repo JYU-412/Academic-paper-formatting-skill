@@ -1,0 +1,158 @@
+# Academic Paper Formatting Skills for Claude
+
+Two free [Claude skills](https://support.claude.com/en/articles/12512180-use-skills-in-claude) that help researchers prepare a manuscript for submission, and revise it after peer review, for these journals:
+
+| Skill | Journals |
+|---|---|
+| **`jama-manuscript-prep`** | JAMA Network journals: *JAMA*, *JAMA Network Open*, *JAMA Internal Medicine*, *JAMA Neurology*, *JAMA Psychiatry*, *JAMA Health Forum*, and the other JAMA specialty journals |
+| **`gsa-manuscript-prep`** | Gerontological Society of America journals: *Journals of Gerontology Series A* (Biological or Medical Sciences), *Series B* (Psychological or Social Sciences), *The Gerontologist*, *Innovation in Aging*, *Public Policy & Aging Report* |
+
+**[Download the latest release →](../../releases/latest)**
+
+---
+
+## What this is
+
+A *skill* is a set of instructions that Claude loads when it's relevant. Once installed, you can upload your manuscript and say something like *"get this ready for JAMA Network Open"* or *"check my paper against The Gerontologist's requirements"*, and Claude follows a checklist built from each journal's own Instructions for Authors.
+
+Each skill covers the whole path from draft to accepted paper:
+
+- **Preparing:** a requirements card for your journal and article type; an abstract generated automatically from your manuscript's content, with the journal's required headings and word limit; Key Points (JAMA) or keywords and the Translational Significance statement (GSA), also drafted from your content; and a section-order check
+- **Polishing:** AMA or APA style, number consistency across abstract, text, and tables, causal-language checks for observational designs, and a light clarity edit in your own voice
+- **Fitting the limits:** an exact word-count dashboard, trim-to-fit suggestions with every cut tracked, and ideas for what to move to the supplement
+- **Submitting:** reporting-guideline mapping (STROBE, CONSORT, PRISMA, and others), reference checks, title page and required statements, an anonymization check for blinded files (GSA), cover letter, and a mock peer review
+- **Revising:** a point-by-point response-to-reviewers table, and retargeting to another journal after a rejection
+
+## Why use it
+
+- **Fewer desk rejections for format.** Word limits, missing Key Points, wrong abstract headings, ageist terms, or a missing Data Availability statement can get a paper returned before review. The skill checks all of these against current rules.
+- **Accurate word counts.** The built-in counter applies each journal's own definition of what counts: main text only (JAMA, JGB, *The Gerontologist*, *Innovation in Aging*), title page and abstract included (JGA), or references included (PPAR). It also counts tracked changes from co-authors as accepted, which Word's own counter on a draft with unaccepted changes won't do.
+- **Your voice stays yours.** Edits and trims cut redundancy before rewriting, reuse your own phrasing, and come with a change log or Word comments, so you accept or reject each change.
+- **Nothing invented.** Abstracts, Key Points, and responses are built only from what's in your manuscript or what you say. Missing details become placeholders like `[CI NEEDED]`, never made-up numbers.
+- **Pick only what you need.** Each run starts with a menu grouped by stage, so a quick abstract check doesn't turn into a full review.
+
+## How to install
+
+### Option A: Claude app (web or desktop)
+
+Available on Free, Pro, Max, Team, and Enterprise plans.
+
+1. Download `jama-manuscript-prep.zip` and/or `gsa-manuscript-prep.zip` from the [latest release](../../releases/latest) (or from the [`dist/`](dist) folder). Don't unzip them.
+2. In Claude, open **Settings → Capabilities** and turn on **Code execution and file creation**. The skills need it to read Word files and run the word counter.
+3. Go to **Customize → Skills**.
+4. Click **+**, then **+ Create skill**, then **Upload a skill**, and choose the ZIP file.
+5. Make sure the skill's toggle is on. Repeat for the second skill if you want both.
+
+On Team and Enterprise plans, an organization owner may need to enable code execution and skills first, under **Organization settings → Plugins & skills**. See Anthropic's guide: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude).
+
+### Option B: Claude Code
+
+Copy the skill folders into your personal skills directory:
+
+```bash
+git clone https://github.com/JYU-412/Academic-paper-formatting-skill.git
+mkdir -p ~/.claude/skills
+cp -r Academic-paper-formatting-skill/skills/* ~/.claude/skills/
+```
+
+To share them with a project team instead, copy them into `.claude/skills/` inside the project repository. See [Claude Code skills docs](https://code.claude.com/docs/en/skills).
+
+## How to use it, step by step
+
+1. **Start a new chat** and attach your manuscript (.docx works best; .pdf or pasted text also work).
+2. **Say what you want and where you're submitting.** Examples:
+   - *"Get this ready for JAMA Network Open as an Original Investigation."*
+   - *"I'm submitting to JGB Social Sciences. Check the word count and draft the abstract."*
+   - *"Write the Translational Significance statement for Innovation in Aging."*
+   - *"Here are the reviewer comments from The Gerontologist. Draft a response table."*
+   - In Claude Code you can also type `/jama-manuscript-prep` or `/gsa-manuscript-prep`.
+3. **Confirm the basics.** Claude infers the journal, section, article type, and study design from your message and manuscript, and asks only about what's missing.
+4. **Pick from the menu.** If your request was general, Claude shows the menu by stage (Preparing, Polishing, Fitting the limits, Submitting, Revising). Reply with numbers ("1, 9, 10"), a stage ("all of Submitting"), or "everything".
+5. **Review the output.**
+   - Checks come back as a short report sorted into *must fix*, *should fix*, and *optional*.
+   - New text (abstract, Key Points, statements, cover letter) comes ready to paste, with its word count and any placeholders.
+   - For edits to a Word file, you get a copy of your manuscript with tracked changes or Word comments, so nothing in your original is overwritten.
+6. **Fill the placeholders and decide the open items.** Each run ends with a list of what only you can supply or decide.
+7. **Come back at the revision stage** with the decision letter. The same skill handles the response to reviewers and re-checks the limits on the revised file.
+
+### Example: what a check looks like
+
+> **Verdict:** main text is 3412 words, over the 3000-word limit by 412; abstract and Key Points are missing.
+>
+> **Must fix:** add Key Points (75-100 words) and a structured abstract (≤350 words, with Design, Setting, and Participants as separate headings at submission); shorten the title from 128 to ≤100 characters; one P value is above the stated multiple-testing threshold but is described as significant (please check).
+>
+> **Should fix:** state how race and ethnicity were determined; give the R version; AMA formatting of statistics.
+>
+> **Trim suggestions:** 14 Word comments saving about 450 words, each with replacement text built from your own sentences.
+
+## The word counters (optional, no Claude needed)
+
+The counters are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3 and `lxml` (`pip install lxml`).
+
+```bash
+# JAMA Network Original Investigation
+python scripts/jama_count.py manuscript.docx --text-limit 3000 --abstract-limit 350 --kp-limit 100 --display-limit 5 --ref-limit 75
+
+# JGB Social Sciences, quantitative Research Article
+python scripts/gsa_count.py manuscript.docx --mode text --text-limit 5000 --abstract-limit 250 --display-limit 5 --ref-limit 50
+
+# JGA Medical Sciences (title page + abstract count toward the limit)
+python scripts/gsa_count.py manuscript.docx --mode text+front --text-limit 5200
+
+# Innovation in Aging, checking the anonymized file for author names
+python scripts/gsa_count.py blinded.docx --text-limit 6000 --statement-limit 100 --authors "Surname1;Surname2"
+```
+
+They detect sections from standard headings, so check the "Sections found" line in the output. If a draft has no Introduction heading, the long paragraphs before Methods are counted as the Introduction.
+
+## Main limits at a glance (checked October 2026)
+
+| Journal | Main research article | What counts | Abstract | Ref style |
+|---|---|---|---|---|
+| JAMA Network Open, JAMA Internal Medicine | 3000 words, ≤5 tables + figures | main text | 350, structured + Key Points | AMA 11 |
+| JGA Biological Sciences | 5800 | title page + abstract + text | 250, unstructured | AMA 11 |
+| JGA Medical Sciences | 5200 | title page + abstract + text | 250, structured | AMA 11 |
+| JGB Psychological Sciences | 5000 | main text | 250, structured | APA 7 |
+| JGB Social Sciences | 5000 (6000 qualitative or mixed) | main text | 250, structured | APA 7 |
+| The Gerontologist | 6000 (7000 qualitative, mixed, intervention) | main text | 250, structured | APA 7 |
+| Innovation in Aging | 6000 + 100-word Translational Significance | main text | 250, structured | APA 7 or AMA 11 |
+| Public Policy & Aging Report | 3500 (Policy Analysis) | text + references | — | APA 7 |
+
+Journals revise their rules. **Each time it runs, the skill fetches the journal's live Instructions for Authors page, and the live page wins over these numbers.** If the page can't be reached, it says so.
+
+## Important notes
+
+- **Disclose AI use.** JAMA Network and GSA journals require you to disclose use of AI tools in preparing a manuscript (GSA journals: in the Methods; JAMA: per the journal's policy). You remain responsible for all content. The skill reminds you once per session when it writes or edits text.
+- **References are checked, not written.** JAMA Network asks authors not to use AI to generate or format references. The skill reports problems and points you to your reference manager (for example, switching the Zotero style to AMA 11th or APA 7th).
+- **Some article types prohibit AI drafting.** For example, JAMA Internal Medicine doesn't allow AI to draft Viewpoints, Inside Story pieces, or Letters to the Editor. Check before using the drafting features on opinion pieces.
+- **Your science stays your call.** When a check finds a substantive issue (an outcome missing from the abstract, a mismatch between Methods and Results), the skill raises it as a question instead of changing your conclusions.
+- **Unpublished data.** Your manuscript is processed by Claude. Check your institution's and funder's policies on sharing unpublished work with AI tools, and your data use agreements (for example, for restricted survey data).
+- **Not affiliated** with the American Medical Association, JAMA Network, the Gerontological Society of America, or Oxford University Press. Journal names are used only to describe compatibility.
+
+## What's in this repository
+
+```
+skills/
+  jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes the word counter)
+  gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes the word counter)
+scripts/
+  jama_count.py                   standalone JAMA word counter
+  gsa_count.py                    standalone GSA word counter
+dist/
+  jama-manuscript-prep.zip        ready to upload to Claude
+  gsa-manuscript-prep.zip         ready to upload to Claude
+CHANGELOG.md
+LICENSE
+```
+
+## Feedback and contributions
+
+Found a rule that changed, a journal you'd like added, or a counting error? Please [open an issue](../../issues) with the journal name, the article type, and a link to the relevant Instructions for Authors section. Pull requests are welcome; please keep each skill self-contained in its `SKILL.md`, and update the standalone script to match.
+
+## License
+
+[MIT](LICENSE). Free to use, share, and adapt, with attribution.
+
+## Author
+
+Created by [Jiao Yu](https://github.com/JYU-412). If these skills help with your submission, a star on the repository helps others find them.
