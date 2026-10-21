@@ -32,6 +32,8 @@ Present this menu so the author picks only what they need. Accept numbers, range
 
 **Polishing**
 6. Style check: APA 7 or AMA 11, plus GSA language rules (ageist terms, age ranges, demographics)
+6b. Page layout and heading check (font, spacing, margins, page and line numbers, page breaks, APA heading levels, footnotes, leftover tracked changes and comments)
+6c. Format my tables: edit a copy of the file so its tables follow APA/GSA (or AMA for JGA) style, with text fixes as tracked changes
 7. Consistency check: numbers across abstract, text, and tables
 8. Causal language check
 9. Clarity edit in the author's voice
@@ -53,7 +55,7 @@ Present this menu so the author picks only what they need. Accept numbers, range
 19. Response-to-reviewers table
 20. Retarget to another GSA journal (or between a GSA journal and a JAMA Network journal)
 
-Run multiple features in this order: requirements (1) and counts (10) first, then checks (5-8, 13-16), then writing and edits (2-4, 9, 11, 12), then 17-18.
+Run multiple features in this order: requirements (1) and counts (10) first, then checks (5-8, 6b, 13-16), table formatting (6c) only when the author asks for it, then writing and edits (2-4, 9, 11, 12), then 17-18.
 
 ## Step 3: Get the current requirements
 
@@ -71,6 +73,10 @@ python gsa_count.py manuscript.docx --mode text --text-limit 5000 --abstract-lim
 - `--statement-limit 100` for Innovation in Aging's Translational Significance statement
 
 It also flags ageist terms, keyword problems, first-person words, and author names in the blinded file. If the draft has no Introduction heading, it treats the long paragraphs before Methods as the Introduction. If its section detection looks wrong, say so and count that part by hand.
+
+For page layout and headings, write the **Layout checker** at the end of this file to the scratchpad as `layout_check.py` and run `python layout_check.py manuscript.docx --journal jgb` (or `jga`, `tg`, `ia`, `ppar`; add `--blinded` for the anonymized file). It resolves Word styles the way Word renders them and reports paper size, 1-inch margins, body font and size (12-pt Times New Roman at JGA and JGB), double spacing, justification, page and line numbers (JGB Social: no line numbers), page breaks before the abstract, references, captions, and each table, footnotes (not allowed), APA heading levels, leftover tracked changes and comments, and author names in the document properties.
+
+To **format** tables (feature 6c, only when the author asks), write the **Table formatter** to the scratchpad as `table_format.py` and run `python table_format.py manuscript.docx --style apa -o manuscript_tables.docx` (`--style ama` for JGA). It writes a new file and a `.changes.md` log; the original is never touched.
 
 For tables, write the **Table checker** at the end of this file to the scratchpad as `table_check.py` and run `python table_check.py manuscript.docx --style apa` (or `--style ama --allow-asterisks` for JGA). It checks every Word table for vertical lines, shading, values aligned with tabs or stacked with line breaks, empty cells, mixed decimal places, hyphens used as minus signs, ±, comma use in large numbers, P value format, and footnote markers.
 
@@ -221,6 +227,10 @@ Principles that apply to all of them:
 **5. Section order.** Run the table checker for table construction. Check against the journal's layout: title page (separate file where required), abstract, keywords, statement (Innovation in Aging), main text headings (Innovation in Aging lists Background and Objectives, Research Design and Methods, Results, and Discussion and Implications for the text itself; the others use Introduction, Methods, Results, Discussion), Funding, Conflict of Interest, Data Availability, Acknowledgments, Author Notes, References, tables, figure captions with alt text, supplement. Methods should include design, sample and eligibility, measures, analysis (software and version), ethics statement, reporting guideline, and how demographics were assessed.
 
 **6. Style check.** Run the table checker and fold its findings into the report. Then check the style reference above, including **Table and number formatting**, plus the GSA rules (ageist terms, age ranges, demographics, footnotes, abbreviations, table note order, alt text, funding wording). Report as a table (location | quote | issue | fix), grouping repeated issues.
+
+**6b. Page layout and heading check.** Run the layout checker with the journal code (`jga`, `jgb`, `tg`, `ia`, `ppar`; `--blinded` for the anonymized file). Report must-fix items (marked "journal requirement": double spacing, 12-pt Times New Roman at JGA and JGB, 1-inch margins and no line numbers at JGB Social, no footnotes, abstract, references, captions, and each table on a new page, document properties cleared in the blinded file) and suggestions. For APA journals, show the detected headings and their levels and propose the APA 7 levels: Level 1 centered bold Title Case for the main sections the journal lists (JGB: Introduction, Methods, Results, Discussion), Level 2 flush-left bold Title Case, Level 3 flush-left bold italic Title Case, Levels 4-5 indented and run in with a period. Innovation in Aging uses Background and Objectives, Research Design and Methods, Results, and Discussion and Implications. Always tell the author to accept or reject tracked changes and delete comments in the submission copy if any remain. Don't edit layout unless asked; if asked, edit a copy with the docx skill.
+
+**6c. Format my tables.** Use only when the author asks for tables to be formatted (or accepts an offer after a check). (1) Run the table checker and show the findings. (2) Suggest resolving tracked changes inside tables first; the formatter leaves those runs alone. (3) Run `python table_format.py manuscript.docx --style apa -o <name>_tables.docx` (`--style ama` for JGA; `--include-supplement` for supplementary tables). (4) What it does: horizontal rules only (top, below header, bottom), no shading or colored text, header row repeats, APA alignment (stub left, other cells centered); tracked text fixes for P values (0.04 to .04, 0.000 to <.001), minus signs, and number separators (APA: 2449 to 2,449; AMA at JGA: commas removed). It never changes values, decimals, wording, or order. (5) Re-run the checker on the output and list what remains by hand: the APA title layout (bold **Table 1** on its own line, italic title below), the *Note.* / lettered / asterisk note order, ±, mixed decimals, an italic lowercase *p* column heading, and empty cells (em dash, defined in the note). (6) Deliver the formatted .docx and the change log, and remind the author to review the tracked changes before accepting.
 
 **7. Consistency check.** Build a fact table (Ns through the sample flow, demographics, main estimates and CIs, dates) and check every place each appears: abstract, statement, text, tables, figure captions. Recompute percentages from counts.
 
@@ -592,7 +602,6 @@ Write this to the scratchpad as `table_check.py` before running it. Use `--style
 Usage:
     python table_check.py manuscript.docx --style ama   # JAMA Network, JGA (AMA 11)
     python table_check.py manuscript.docx --style apa   # JGB, The Gerontologist, Innovation in Aging, PPAR (APA 7)
-    python table_check.py manuscript.docx --style ama --allow-asterisks   # JGA (AMA; asterisk P notes allowed)
 
 Checks every Word table before the Supplement (add --include-supplement to check
 eTables too) and reports, per table:
@@ -665,7 +674,7 @@ def style_borders(styles_root, style_id):
     return on
 
 
-def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
+def check_table(idx, tbl, title, styles_root, style):
     issues = defaultdict(list)
     tblpr = tbl.find(W + "tblPr")
     # --- vertical lines
@@ -830,8 +839,8 @@ def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
     syms = re.findall(r"[†‡§¶]", alltext)
     if syms:
         issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style == 'apa' else ''}.")
-    if style == "ama" and not allow_asterisks and re.search(r"\d\*|\*\s*$", alltext):
-        issues["Notes"].append("Asterisks found next to values. JAMA Network tables mark footnotes with superscript letters and generally report exact P values rather than significance asterisks.")
+    if style == "ama" and re.search(r"\d\*|\*\s*$", alltext):
+        issues["Notes"].append("Asterisks found next to values. JAMA style marks footnotes with superscript letters and reports exact P values instead of significance asterisks.")
 
     # --- title
     if not title:
@@ -840,6 +849,8 @@ def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
         words_n = len(re.sub(r"^table\s+\d+\.?\s*", "", title, flags=re.I).split())
         if style == "ama" and words_n > 15:
             issues["Title"].append(f"Title is {words_n} words; JAMA asks for a brief descriptive phrase, preferably 10-15 words.")
+        if style == "apa" and re.match(r"^table\s*\d+[.:]?\s+\S", title, re.I):
+            issues["Title"].append("APA puts the table number on its own line in bold (**Table 1**) and the title on the next line in italic Title Case, with no period after the number.")
         if re.search(r"\((?:[A-Z][a-z]+ )+(?:Study|Survey)[^)]*\d{4}\)", title):
             issues["Title"].append("Title includes a data source/year in parentheses; consider moving it to a table note.")
     return issues
@@ -850,7 +861,6 @@ def main():
     ap.add_argument("path")
     ap.add_argument("--style", choices=["ama", "apa"], required=True)
     ap.add_argument("--include-supplement", action="store_true")
-    ap.add_argument("--allow-asterisks", action="store_true", help="JGA: asterisk P value notes are allowed")
     a = ap.parse_args()
     p = Path(a.path)
     if p.suffix.lower() != ".docx":
@@ -894,7 +904,7 @@ def main():
                 continue
             n += 1
             title = last_title if since_title <= 2 else None
-            report.append((n, title, check_table(n, node, title, styles_root, a.style, a.allow_asterisks)))
+            report.append((n, title, check_table(n, node, title, styles_root, a.style)))
             last_title, since_title = None, 99
 
     if len(caption_titles) > n and not a.include_supplement:
@@ -914,6 +924,1024 @@ def main():
                 total += 1
                 print(f"  [{cat}] {msg}")
     print(f"\n{total} item(s) to review. These are checks, not fixes; confirm each against the journal's instructions.")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Layout checker
+
+Write this to the scratchpad as `layout_check.py` before running it. Use `--journal jga`, `jgb`, `tg`, `ia`, or `ppar`.
+
+```python
+#!/usr/bin/env python3
+"""Page layout and heading checker for journal manuscripts (.docx).
+
+Usage:
+    python layout_check.py manuscript.docx --journal jama   # JAMA Network journals
+    python layout_check.py manuscript.docx --journal jga    # Journals of Gerontology Series A
+    python layout_check.py manuscript.docx --journal jgb    # Journals of Gerontology Series B
+    python layout_check.py manuscript.docx --journal tg     # The Gerontologist
+    python layout_check.py manuscript.docx --journal ia     # Innovation in Aging
+    python layout_check.py manuscript.docx --journal ppar   # Public Policy & Aging Report
+    add --blinded when checking the anonymized file
+
+Checks the file as Word would render it (styles and defaults resolved):
+  page: paper size, margins, orientation of text pages
+  text: body font and size, line spacing, justification, highlighting
+  numbering: page numbers in a header/footer, line numbers
+  structure: page breaks before the sections that must start on a new page,
+             tables each on their own page (GSA), footnotes/endnotes (GSA bans them)
+  headings: detected heading levels and APA 7 level formatting (GSA journals) or
+            consistency (JAMA), title case
+  file hygiene: unresolved tracked changes, comments, and author names in the
+                document properties (for blinded files)
+Findings are suggestions to review; rules that a journal does not state are marked "suggested".
+"""
+import argparse
+import re
+import sys
+import zipfile
+from collections import Counter, defaultdict
+from pathlib import Path
+
+W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+R = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+
+# Journal rules. "req" = stated in the journal's instructions (checked Oct 2026); "sug" = common practice.
+RULES = {
+    "jama": dict(name="JAMA Network", font=None, sizes=(10, 11, 12), size_src="req", font_src=None,
+                 double="req", ragged="req", margins=None, pagenum="req", lines=None, footnotes=None,
+                 newpage=["key_points", "abstract", "text", "references", "legends", "tables"], each_table_page=False,
+                 apa_headings=False),
+    "jga": dict(name="Journals of Gerontology Series A", font="Times New Roman", sizes=(12,), size_src="req", font_src="req",
+                double="req", ragged="sug", margins=None, pagenum="sug", lines=None, footnotes="req",
+                newpage=["abstract", "references", "legends", "tables"], each_table_page=True, apa_headings=False),
+    "jgb": dict(name="Journals of Gerontology Series B", font="Times New Roman", sizes=(12,), size_src="req", font_src="req",
+                double="req", ragged="sug", margins=1440, pagenum="sug", lines="none", footnotes="req",
+                newpage=["abstract", "references", "legends", "tables"], each_table_page=True, apa_headings=True),
+    "tg": dict(name="The Gerontologist", font=None, sizes=(12,), size_src="sug", font_src=None,
+               double="sug", ragged="sug", margins=1440, pagenum="sug", lines=None, footnotes="req",
+               newpage=["references", "legends", "tables"], each_table_page=True, apa_headings=True),
+    "ia": dict(name="Innovation in Aging", font=None, sizes=(12,), size_src="sug", font_src=None,
+               double="sug", ragged="sug", margins=1440, pagenum="sug", lines=None, footnotes="req",
+               newpage=["abstract", "references", "tables"], each_table_page=True, apa_headings=True),
+    "ppar": dict(name="Public Policy & Aging Report", font=None, sizes=(12,), size_src="sug", font_src=None,
+                 double="req", ragged="sug", margins=1440, pagenum="sug", lines=None, footnotes="req",
+                 newpage=["references", "tables"], each_table_page=True, apa_headings=True),
+}
+
+SECTION_PATTERNS = {
+    "key_points": r"key points",
+    "abstract": r"(structured )?abstract",
+    "text": r"(introduction|background)",
+    "references": r"(references|bibliography)",
+    "legends": r"(figure legends?|figure captions?|figure titles?( and legends)?|table titles and figure captions)",
+}
+SMALL_WORDS = {"a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet", "as", "at", "by", "in", "of", "off",
+               "on", "per", "to", "up", "via", "vs", "vs."}
+SHADE_OK = {"auto", "ffffff", "none", ""}
+
+
+class Styles:
+    def __init__(self, root):
+        self.root = root
+        self.by_id = {}
+        self.default_p = None
+        self.default_char = None
+        if root is None:
+            return
+        for st in root.findall(W + "style"):
+            self.by_id[st.get(W + "styleId")] = st
+            if st.get(W + "default") == "1":
+                if st.get(W + "type") == "paragraph":
+                    self.default_p = st.get(W + "styleId")
+                elif st.get(W + "type") == "character":
+                    self.default_char = st.get(W + "styleId")
+        dd = root.find(W + "docDefaults")
+        self.dd_rpr = dd.find(f"{W}rPrDefault/{W}rPr") if dd is not None else None
+        self.dd_ppr = dd.find(f"{W}pPrDefault/{W}pPr") if dd is not None else None
+
+    def chain(self, sid):
+        out, seen = [], set()
+        while sid and sid not in seen and sid in self.by_id:
+            seen.add(sid)
+            st = self.by_id[sid]
+            out.append(st)
+            b = st.find(W + "basedOn")
+            sid = b.get(W + "val") if b is not None else None
+        return out
+
+
+def first(*vals):
+    for v in vals:
+        if v is not None:
+            return v
+    return None
+
+
+def get_ppr_prop(ppr, styles, pstyle, tag, attr):
+    """Resolve a paragraph property: direct -> style chain -> docDefaults."""
+    if ppr is not None:
+        el = ppr.find(W + tag)
+        if el is not None and el.get(W + attr) is not None:
+            return el.get(W + attr)
+    for st in styles.chain(pstyle or styles.default_p):
+        el = st.find(f"{W}pPr/{W}{tag}")
+        if el is not None and el.get(W + attr) is not None:
+            return el.get(W + attr)
+    if styles.dd_ppr is not None:
+        el = styles.dd_ppr.find(W + tag)
+        if el is not None and el.get(W + attr) is not None:
+            return el.get(W + attr)
+    return None
+
+
+def run_props(run, styles, pstyle):
+    """Resolve font, size, bold, italic, highlight for a run."""
+    rpr = run.find(W + "rPr")
+    chains = []
+    if rpr is not None and rpr.find(W + "rStyle") is not None:
+        chains += styles.chain(rpr.find(W + "rStyle").get(W + "val"))
+    chains += styles.chain(pstyle or styles.default_p)
+
+    def look(tag, attr=None):
+        cands = [rpr] + [st.find(W + "rPr") for st in chains] + [styles.dd_rpr]
+        for c in cands:
+            if c is None:
+                continue
+            el = c.find(W + tag)
+            if el is not None:
+                if attr is None:
+                    v = el.get(W + "val")
+                    return v not in ("0", "false", "none")
+                if el.get(W + attr) is not None:
+                    return el.get(W + attr)
+        return None
+
+    font = look("rFonts", "ascii") or look("rFonts", "hAnsi")
+    if font is None:
+        theme = look("rFonts", "asciiTheme")
+        font = f"(theme font: {theme})" if theme else None
+    sz = look("sz", "val")
+    return dict(font=font, size=int(sz) / 2 if sz else None, b=bool(look("b")), i=bool(look("i")),
+                hl=look("highlight", "val"))
+
+
+def para_text(p):
+    out = []
+    for el in p.iter(W + "t", W + "tab"):
+        anc, bad = el.getparent(), False
+        while anc is not None and anc is not p:
+            if anc.tag in (W + "del", W + "moveFrom"):
+                bad = True
+                break
+            anc = anc.getparent()
+        if not bad:
+            out.append(" " if el.tag == W + "tab" else (el.text or ""))
+    return "".join(out).replace(" ", " ").strip()
+
+
+def visible_runs(p):
+    runs = []
+    for r in p.iter(W + "r"):
+        anc, bad = r.getparent(), False
+        while anc is not None and anc is not p:
+            if anc.tag in (W + "del", W + "moveFrom"):
+                bad = True
+                break
+            anc = anc.getparent()
+        if bad:
+            continue
+        t = "".join((x.text or "") for x in r.findall(W + "t"))
+        if t.strip():
+            runs.append((r, t))
+    return runs
+
+
+def is_title_case(t):
+    words = re.findall(r"[A-Za-z][A-Za-z'\-]*", t)
+    if not words:
+        return True
+    for k, w in enumerate(words):
+        if k > 0 and w.lower() in SMALL_WORDS:
+            continue
+        if len(w) >= 4 and w[0].islower():
+            return False
+        if k == 0 and w[0].islower():
+            return False
+    return True
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("path")
+    ap.add_argument("--journal", choices=sorted(RULES), required=True)
+    ap.add_argument("--blinded", action="store_true", help="this is the anonymized file")
+    a = ap.parse_args()
+    rules = RULES[a.journal]
+    p = Path(a.path)
+    if p.suffix.lower() != ".docx":
+        sys.exit("layout_check.py reads .docx files only.")
+    from lxml import etree
+    z = zipfile.ZipFile(p)
+    names = z.namelist()
+    root = etree.fromstring(z.read("word/document.xml"))
+    styles = Styles(etree.fromstring(z.read("word/styles.xml")) if "word/styles.xml" in names else None)
+    theme_fonts = {}
+    th = [n for n in names if re.match(r"word/theme/theme\d*\.xml", n)]
+    if th:
+        A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+        tr = etree.fromstring(z.read(th[0]))
+        for kind in ("major", "minor"):
+            el = tr.find(f".//{A}{kind}Font/{A}latin")
+            if el is not None:
+                theme_fonts[kind] = el.get("typeface")
+    body = root.find(W + "body")
+    out = defaultdict(list)
+
+    def add(cat, msg, src=None):
+        tag = {"req": " (journal requirement)", "sug": " (suggested; not stated by the journal)"}.get(src, "")
+        out[cat].append(msg + tag)
+
+    # ---------- page setup
+    sects = list(root.iter(W + "sectPr"))
+    sizes, margins_bad, has_pgnum_ref, lnnum = Counter(), [], False, False
+    portrait_sections = 0
+    for sp in sects:
+        pg = sp.find(W + "pgSz")
+        if pg is not None:
+            w, h = int(pg.get(W + "w", 0)), int(pg.get(W + "h", 0))
+            if pg.get(W + "orient") == "landscape" or w > h:
+                continue  # landscape pages are fine for wide tables
+            portrait_sections += 1
+            sizes["US Letter" if (w, h) == (12240, 15840) else ("A4" if abs(w - 11906) < 30 and abs(h - 16838) < 30 else f"{w / 1440:.2f} x {h / 1440:.2f} in")] += 1
+        mar = sp.find(W + "pgMar")
+        if mar is not None and rules["margins"]:
+            vals = {k: int(mar.get(W + k, 0)) for k in ("top", "bottom", "left", "right")}
+            if any(abs(v - rules["margins"]) > 20 for v in vals.values()):
+                margins_bad.append(", ".join(f"{k} {v / 1440:.2f} in" for k, v in vals.items()))
+        if sp.find(W + "lnNumType") is not None:
+            lnnum = True
+        if sp.findall(W + "footerReference") or sp.findall(W + "headerReference"):
+            has_pgnum_ref = True
+    if sizes:
+        add("Page setup", "Paper size: " + ", ".join(f"{k} ({v} section{'s' if v > 1 else ''})" for k, v in sizes.items()) + ". US Letter or A4 are both accepted by these journals.")
+    if margins_bad:
+        add("Page setup", f"Margins are not 1 inch on every side: {margins_bad[0]}.", "req" if a.journal == "jgb" else "sug")
+    if lnnum and rules["lines"] == "none":
+        add("Page setup", "Line numbering is on. JGB Social Sciences asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
+    elif lnnum:
+        add("Page setup", "Line numbering is on. That is fine for review unless the journal says otherwise.")
+
+    # page numbers: look for a PAGE field in headers/footers
+    pg_field = False
+    for n in names:
+        if re.match(r"word/(header|footer)\d*\.xml", n):
+            x = z.read(n).decode("utf8", "ignore")
+            if re.search(r"instrText[^>]*>\s*PAGE\b|fldSimple[^>]*instr=\"\s*PAGE\b", x):
+                pg_field = True
+    if not pg_field:
+        add("Page setup", "No page numbers found in the header or footer. Insert page numbers (Insert > Page Number)"
+            + (", numbered consecutively from the title page." if a.journal == "jama" else "; reviewers cite comments by page."),
+            "req" if rules["pagenum"] == "req" else "sug")
+
+    # ---------- body text paragraphs (top-level only, not tables)
+    items = []
+
+    def walk(node):
+        for ch in node:
+            if ch.tag == W + "p":
+                items.append(("p", ch))
+            elif ch.tag == W + "tbl":
+                items.append(("tbl", ch))
+            elif ch.tag == W + "sdt":
+                c = ch.find(W + "sdtContent")
+                if c is not None:
+                    walk(c)
+    walk(body)
+
+    fonts, fsizes, spacing, just, hl_count = Counter(), Counter(), Counter(), Counter(), 0
+    headings = []
+    in_refs = False
+    in_supp = False
+    paras_info = []
+    for kind, node in items:
+        if kind != "p":
+            paras_info.append(("tbl", node, ""))
+            continue
+        t = para_text(node)
+        paras_info.append(("p", node, t))
+        if not t:
+            continue
+        low = t.lower().rstrip(":")
+        if re.fullmatch(r"(supplement(ary|al)?( material| online content)?( \d+)?|emethods|eappendix)", low):
+            in_supp = True
+        if in_supp:
+            continue
+        ppr = node.find(W + "pPr")
+        pstyle = ppr.find(W + "pStyle").get(W + "val") if ppr is not None and ppr.find(W + "pStyle") is not None else None
+        runs = visible_runs(node)
+        props = [run_props(r, styles, pstyle) for r, _ in runs]
+        nwords = len(t.split())
+        is_heading_style = bool(pstyle and re.match(r"(heading|title)", pstyle, re.I))
+        all_bold = bool(props) and all(pr["b"] for pr in props)
+        all_ital = bool(props) and all(pr["i"] for pr in props)
+        jc = get_ppr_prop(ppr, styles, pstyle, "jc", "val") or "left"
+        if (is_heading_style or all_bold) and nwords <= 14 and not re.match(r"^(table|figure|e?table|e?figure)\s*\d", low):
+            headings.append(dict(text=t, jc=jc, b=all_bold or is_heading_style, i=all_ital, style=pstyle,
+                                 ends_period=t.endswith(".")))
+            if re.fullmatch(SECTION_PATTERNS["references"], low):
+                in_refs = True
+            continue
+        if re.match(r"^(table|figure)\s*\d", low):
+            continue
+        # body paragraph stats
+        for pr in props:
+            if pr["font"]:
+                fonts[pr["font"]] += 1
+            if pr["size"]:
+                fsizes[pr["size"]] += 1
+            if pr["hl"] and pr["hl"] != "none":
+                hl_count += 1
+        line = get_ppr_prop(ppr, styles, pstyle, "spacing", "line")
+        rule = get_ppr_prop(ppr, styles, pstyle, "spacing", "lineRule") or "auto"
+        if line and rule == "auto":
+            v = int(line) / 240
+            spacing["double" if v >= 1.95 else ("1.5" if v >= 1.45 else ("single" if v <= 1.16 else f"{v:.2f}"))] += 1
+        elif line:
+            spacing[f"exact/at least {int(line) / 20:.0f} pt"] += 1
+        else:
+            spacing["single"] += 1
+        just[jc] += 1
+
+    # fonts and sizes
+    if fonts:
+        resolved = Counter()
+        for f, k in fonts.items():
+            if f.startswith("(theme font:"):
+                f2 = theme_fonts.get("major" if "major" in f.lower() else "minor") or f
+                resolved[f2] += k
+            else:
+                resolved[f] += k
+        fonts = resolved
+        main_font, n = fonts.most_common(1)[0]
+        others = [f for f in fonts if f != main_font and fonts[f] > 2]
+        if rules["font"] and main_font != rules["font"]:
+            add("Text", f"Body font is {main_font}; {rules['name']} asks for 12-point {rules['font']}.", rules["font_src"])
+        if others:
+            add("Text", f"Mixed body fonts: {', '.join([main_font] + others)}. Use one font throughout (often from pasted text or Zotero fields).")
+    if fonts and fsizes:
+        out["Text"].insert(0, f"Body text: {fonts.most_common(1)[0][0]}, {fsizes.most_common(1)[0][0]:g} pt (most common).")
+    if fsizes:
+        main_size = fsizes.most_common(1)[0][0]
+        if main_size not in rules["sizes"]:
+            add("Text", f"Body text is {main_size:g} pt; use {'/'.join(str(s) for s in rules['sizes'])} pt.", rules["size_src"])
+        odd = [f"{s:g} pt" for s in fsizes if s != main_size and fsizes[s] > 5]
+        if odd:
+            add("Text", f"Some body text is in other sizes ({', '.join(odd)}).")
+    if spacing:
+        total = sum(spacing.values())
+        dbl = spacing.get("double", 0)
+        if dbl / total < 0.9:
+            add("Text", f"Only {100 * dbl / total:.0f}% of body paragraphs are double spaced (found: " + ", ".join(f"{k} {v}" for k, v in spacing.most_common()) + "). Double space the whole manuscript, including references (Home > Line spacing > 2.0).", rules["double"])
+    if just.get("both", 0) + just.get("distribute", 0) > 0:
+        add("Text", f"{just.get('both', 0) + just.get('distribute', 0)} body paragraph(s) are justified. Use left alignment with a ragged right margin.", rules["ragged"])
+    if hl_count:
+        add("Text", f"{hl_count} highlighted run(s) in the body text. Remove highlighting before submission.")
+
+    # ---------- footnotes / endnotes
+    for part, label in (("word/footnotes.xml", "footnote"), ("word/endnotes.xml", "endnote")):
+        if part in names:
+            x = etree.fromstring(z.read(part))
+            real = [f for f in x if f.get(W + "type") not in ("separator", "continuationSeparator", "continuationNotice")]
+            if real and rules["footnotes"] == "req":
+                add("Structure", f"{len(real)} {label}(s) found. GSA journals don't allow footnotes or endnotes; move them to an \"Author Notes\" section (PPAR allows up to 5 short endnotes).", "req")
+            elif real:
+                add("Structure", f"{len(real)} {label}(s) found. Check the journal's instructions; most medical journals fold notes into the text or the acknowledgments.")
+
+    # ---------- page breaks before sections and tables
+    def starts_new_page(idx):
+        """True if paragraph idx begins a new page: pageBreakBefore, or a page/section break just before it."""
+        kind, node, _ = paras_info[idx]
+        if kind == "p":
+            ppr = node.find(W + "pPr")
+            pstyle = ppr.find(W + "pStyle").get(W + "val") if ppr is not None and ppr.find(W + "pStyle") is not None else None
+            v = None
+            if ppr is not None and ppr.find(W + "pageBreakBefore") is not None:
+                v = ppr.find(W + "pageBreakBefore").get(W + "val", "1")
+            else:
+                for st in styles.chain(pstyle):
+                    el = st.find(f"{W}pPr/{W}pageBreakBefore")
+                    if el is not None:
+                        v = el.get(W + "val", "1")
+                        break
+            if v not in (None, "0", "false"):
+                return True
+            for br in node.iter(W + "br"):
+                if br.get(W + "type") == "page":
+                    return True
+        j = idx - 1
+        while j >= 0:
+            k2, n2, t2 = paras_info[j]
+            if k2 == "tbl":
+                return False
+            for br in n2.iter(W + "br"):
+                if br.get(W + "type") == "page":
+                    return True
+            if n2.find(f"{W}pPr/{W}sectPr") is not None:
+                return True
+            if t2:
+                return False
+            j -= 1
+        return False
+
+    wanted = rules["newpage"]
+    found_sections = {}
+    first_table_idx = None
+    caption_idx = []
+    for idx, (kind, node, t) in enumerate(paras_info):
+        if kind == "p" and t:
+            low = t.lower().rstrip(":").strip()
+            for key, pat in SECTION_PATTERNS.items():
+                if key not in found_sections and re.fullmatch(pat, low):
+                    found_sections[key] = idx
+            if re.match(r"^table\s*\d+\b", low):
+                caption_idx.append(idx)
+        if kind == "tbl" and first_table_idx is None:
+            first_table_idx = idx
+    if "text" in wanted and "text" not in found_sections:
+        # no Introduction heading: the first long paragraph is the start of the text
+        for idx, (kind, node, t) in enumerate(paras_info):
+            if kind == "p" and len(t.split()) >= 40:
+                found_sections["text"] = idx
+                break
+    labels = {"key_points": "Key Points", "abstract": "Abstract", "text": "the main text (Introduction)",
+              "references": "References", "legends": "Figure legends/captions", "tables": "Tables"}
+    for key in wanted:
+        if key == "tables":
+            continue
+        if key in found_sections and not starts_new_page(found_sections[key]):
+            add("Structure", f"{labels[key]} does not start on a new page. Insert a page break before it (Ctrl/Cmd+Enter).", "req" if a.journal in ("jama", "jgb", "jga") else "sug")
+    if caption_idx:
+        not_new = [paras_info[i][2][:20] for i in caption_idx if not starts_new_page(i)]
+        if rules["each_table_page"] and not_new:
+            add("Structure", f"{len(not_new)} table(s) don't start on their own page ({', '.join(not_new[:3])}...). GSA journals want each table on a separate page at the end of the file.", "req")
+        elif not rules["each_table_page"] and not_new and len(not_new) == len(caption_idx):
+            add("Structure", "Tables don't start on a new page after the references/legends. JAMA asks for tables at the end of the manuscript file, starting on a new page.", "req")
+
+    # ---------- headings
+    if headings:
+        levels = []
+        for h in headings:
+            if h["b"] and h["jc"] == "center" and not h["i"]:
+                lvl = 1
+            elif h["b"] and h["i"] and h["jc"] != "center":
+                lvl = 3
+            elif h["b"] and h["jc"] != "center":
+                lvl = 2
+            else:
+                lvl = 0
+            levels.append(lvl)
+        summary = "; ".join(f"{h['text'][:28]} [{'L' + str(l) if l else '?'}{', centered' if h['jc'] == 'center' else ''}{', italic' if h['i'] else ''}]" for h, l in zip(headings[:12], levels[:12]))
+        add("Headings", f"{len(headings)} heading(s) detected (first 12): {summary}.")
+        styled = sum(1 for h in headings if h["style"] and re.match(r"heading", h["style"], re.I))
+        if styled < len(headings) / 2:
+            add("Headings", "Most headings are bold body text rather than Word Heading styles. Applying Heading 1/2/3 styles keeps formatting consistent and gives editors a navigable outline (suggested).")
+        if rules["apa_headings"]:
+            main_names = {"introduction", "methods", "method", "results", "discussion", "conclusions", "conclusion",
+                          "research design and methods", "background and objectives", "discussion and implications", "implications"}
+            for h, l in zip(headings, levels):
+                low = h["text"].lower().rstrip(".:")
+                if low in main_names and l != 1:
+                    add("Headings", f"\"{h['text']}\" looks like a main section heading but isn't formatted as APA Level 1 (centered, bold, Title Case).", "sug")
+                if not is_title_case(h["text"].rstrip(".")) and l in (1, 2, 3):
+                    add("Headings", f"\"{h['text']}\" is not in Title Case (APA Levels 1-5 use Title Case).", "sug")
+            if a.journal == "ia":
+                names_present = {h["text"].lower().rstrip(".:") for h in headings}
+                for need in ("background and objectives", "research design and methods", "results", "discussion and implications"):
+                    if need not in names_present:
+                        add("Headings", f"No \"{need.title()}\" heading. Innovation in Aging lists Background and Objectives, Research Design and Methods, Results, and Discussion and Implications as the text headings.", "req")
+        else:
+            # JAMA: check consistency within tier (same alignment/italics for same-looking headings)
+            main_names = {"introduction", "methods", "results", "discussion", "conclusions", "limitations"}
+            fmt = {(h["jc"], h["i"]) for h in headings if h["text"].lower().rstrip(".:") in main_names - {"limitations"}}
+            if len(fmt) > 1:
+                add("Headings", "Main section headings (Introduction, Methods, Results, Discussion, Conclusions) are formatted inconsistently (alignment or italics differ). Give them one style.")
+            for h in headings:
+                if h["text"].endswith(" ") or re.search(r"\s{2,}", h["text"]):
+                    add("Headings", f"Heading \"{h['text'].strip()}\" has extra spaces.")
+
+    # ---------- file hygiene
+    doc_x = z.read("word/document.xml").decode("utf8", "ignore")
+    n_ins, n_del = doc_x.count("<w:ins "), doc_x.count("<w:del ")
+    if n_ins or n_del:
+        authors = sorted(set(re.findall(r'<w:(?:ins|del) [^>]*w:author="([^"]+)"', doc_x)))
+        add("File", f"{n_ins} tracked insertion(s) and {n_del} deletion(s) are still unresolved (by {', '.join(authors[:5])}). Accept or reject all changes in the submission copy (Review > Accept > Accept All Changes).")
+    if "word/comments.xml" in names:
+        n_c = len(re.findall(r"<w:comment ", z.read("word/comments.xml").decode("utf8", "ignore")))
+        if n_c:
+            add("File", f"{n_c} comment(s) remain. Delete all comments in the submission copy (Review > Delete > Delete All Comments in Document).")
+    if a.blinded and "docProps/core.xml" in names:
+        core = z.read("docProps/core.xml").decode("utf8", "ignore")
+        who = [m for m in re.findall(r"<(?:dc:creator|cp:lastModifiedBy)>([^<]+)<", core) if m.strip()]
+        if who:
+            add("File", f"Document properties name {', '.join(sorted(set(who)))}. For the blinded file, remove personal info (Word: File > Info > Check for Issues > Inspect Document > Document Properties and Personal Information).", "req")
+
+    # ---------- report
+    print(f"Layout check for {rules['name']}: {p.name}")
+    total = 0
+    for cat in ("Page setup", "Text", "Structure", "Headings", "File"):
+        msgs = out.get(cat, [])
+        if not msgs:
+            continue
+        print(f"\n[{cat}]")
+        for m in msgs:
+            total += 1
+            print("  - " + m)
+    print(f"\n{total} item(s). Requirements are marked; everything else is a suggestion. Confirm against the journal's live instructions.")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Table formatter
+
+Write this to the scratchpad as `table_format.py` before running it. Use `--style apa` (or `--style ama` for JGA). Run it only when the author asks for tables to be formatted.
+
+```python
+#!/usr/bin/env python3
+"""Format the tables in a manuscript (.docx) to AMA (JAMA Network, JGA) or APA (JGB,
+The Gerontologist, Innovation in Aging, PPAR) conventions. Writes a NEW file; the
+original is never touched.
+
+Usage:
+    python table_format.py manuscript.docx --style ama -o manuscript_tables.docx
+    python table_format.py manuscript.docx --style apa -o manuscript_tables.docx
+Options:
+    --round-small-pct     (AMA) round percentages to whole numbers in groups with n < 100
+    --include-supplement  also format eTables / supplementary tables
+    --no-track            apply text fixes directly instead of as tracked changes
+    --author NAME         name shown on tracked changes (default "Table formatter")
+
+What it changes
+  Layout (applied directly, listed in the change log):
+    - borders: horizontal rules only (top of table, below the header row, bottom);
+      vertical lines, inside grid lines, and per-cell side borders removed
+    - cell shading, colored text, and highlighting removed
+    - header row set to repeat on each page
+    - APA only: stub (first) column left-aligned, all other cells centered
+  Text (as tracked changes by default, so each one can be accepted or rejected):
+    - P values: leading zero dropped (0.04 -> .04, < 0.001 -> <.001); .000 -> <.001
+    - hyphens used as minus signs -> true minus sign (U+2212)
+    - number separators: AMA removes commas (2,449 -> 2449; 12,450 -> 12 450 with a
+      thin space); APA adds commas to 4+ digit counts (2449 -> 2,449; years left alone)
+    - optional (--round-small-pct): 30 (62.5) -> 30 (63) where the column's n < 100
+What it never changes: numeric values, decimals (except the opt-in rounding),
+column or row order, wording, ±, or anything outside tables.
+Tracked changes already in the table are left alone; accept or reject them first for
+a complete pass. A change log (Markdown) is written next to the output file.
+"""
+import argparse
+import copy
+import difflib
+import re
+import shutil
+import sys
+import tempfile
+import zipfile
+from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
+
+W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+XML_SPACE = "{http://www.w3.org/XML/1998/namespace}space"
+PVAL_COL = re.compile(r"^\s*\*?p\*?\s*(value)?", re.I)
+DATE = "2026-01-01T00:00:00Z"
+
+
+def q(tag):
+    return W + tag
+
+
+def in_revision(el, stop):
+    anc = el.getparent()
+    while anc is not None and anc is not stop:
+        if anc.tag in (q("ins"), q("del"), q("moveFrom"), q("moveTo")):
+            return True
+        anc = anc.getparent()
+    return False
+
+
+def cell_text(tc):
+    out = []
+    for t in tc.iter(q("t")):
+        if not in_revision(t, tc) or t.getparent().getparent().tag == q("ins"):
+            out.append(t.text or "")
+    return "".join(out)
+
+
+# ---------------- text transforms ----------------
+def fix_p(text, style):
+    new = text
+    new = re.sub(r"(?<![\d.])0\.0{3,}(?!\d)|(?<![\d.])\.0{3,}(?!\d)", "<.001", new)
+    new = re.sub(r"([<>=≤≥]\s*)0(\.\d)", r"\1\2", new)
+    new = re.sub(r"(?<![\d.])0(\.\d+)", r"\1", new)
+    if style == "ama" and re.fullmatch(r"\s*[<>]\s*\.\d+\s*", new):
+        new = re.sub(r"([<>])\s+\.", r"\1.", new)
+    return new
+
+
+def fix_minus(text):
+    return re.sub(r"(^|[\s(\[,;:/])-(?=\.?\d)", lambda m: m.group(1) + "−", text)
+
+
+def fix_separators(text, style):
+    if style == "ama":
+        def ama(m):
+            digits = m.group(0).replace(",", "")
+            if len(digits) <= 4:
+                return digits
+            groups = []
+            while digits:
+                groups.insert(0, digits[-3:])
+                digits = digits[:-3]
+            return " ".join(groups)
+        return re.sub(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d,]|\.\d)", ama, text)
+
+    def apa(m):
+        s = m.group(0)
+        n = int(s)
+        if 1900 <= n <= 2099 and len(s) == 4:
+            return s  # probably a year
+        return f"{n:,}"
+    return re.sub(r"(?<![\d., ])\d{4,}(?![\d.,])", apa, text)
+
+
+def round_pct(text):
+    """Round the percentage in a 'count (percent)' cell, e.g. 30 (62.5) -> 30 (63).
+    Only whole-cell count (percent) patterns are touched, never mean (SD) or other values."""
+    m = re.fullmatch(r"(\s*\d[\d,\u2009]*\s*\(\s*)(\d{1,3}\.\d+)(\s*%?\s*\)\s*)", text)
+    if not m:
+        return text
+    count = int(re.sub(r"[^\d]", "", m.group(1)))
+    pct = Decimal(m.group(2))
+    if pct > 100 or count == 0 and pct != 0:
+        return text
+    return f"{m.group(1)}{pct.quantize(Decimal('1'), rounding=ROUND_HALF_UP)}{m.group(3)}"
+
+
+# ---------------- tracked replacement ----------------
+class Ids:
+    def __init__(self, start):
+        self.n = start
+
+    def next(self):
+        self.n += 1
+        return str(self.n)
+
+
+def make_run(rpr, text, deleted=False):
+    r = etree.Element(q("r"))
+    if rpr is not None:
+        r.append(copy.deepcopy(rpr))
+    t = etree.SubElement(r, q("delText") if deleted else q("t"))
+    t.text = text
+    t.set(XML_SPACE, "preserve")
+    return r
+
+
+def replace_run_text(run, old, new, track, ids, author):
+    """Replace the text of a single-text run, marking only the changed characters."""
+    if not track:
+        ts = run.findall(q("t"))
+        ts[0].text = new
+        ts[0].set(XML_SPACE, "preserve")
+        for t in ts[1:]:
+            run.remove(t)
+        return
+    rpr = run.find(q("rPr"))
+    parent = run.getparent()
+    pos = parent.index(run)
+    pieces = []
+    sm = difflib.SequenceMatcher(a=old, b=new, autojunk=False)
+    for op, i1, i2, j1, j2 in sm.get_opcodes():
+        if op == "equal":
+            pieces.append(make_run(rpr, old[i1:i2]))
+            continue
+        if i2 > i1:
+            d = etree.Element(q("del"), {q("id"): ids.next(), q("author"): author, q("date"): DATE})
+            d.append(make_run(rpr, old[i1:i2], deleted=True))
+            pieces.append(d)
+        if j2 > j1:
+            ins = etree.Element(q("ins"), {q("id"): ids.next(), q("author"): author, q("date"): DATE})
+            ins.append(make_run(rpr, new[j1:j2]))
+            pieces.append(ins)
+    parent.remove(run)
+    for k, el in enumerate(pieces):
+        parent.insert(pos + k, el)
+
+
+def merge_plain_runs(p):
+    """Join adjacent runs with identical formatting (outside revisions) so numbers aren't split."""
+    runs = [r for r in p.findall(q("r")) if r.find(q("t")) is not None and all(ch.tag in (q("rPr"), q("t")) for ch in r)]
+    prev = None
+    for r in runs:
+        if prev is not None and r.getprevious() is prev:
+            a = prev.find(q("rPr"))
+            b = r.find(q("rPr"))
+            sa = etree.tostring(a) if a is not None else b""
+            sb = etree.tostring(b) if b is not None else b""
+            if sa == sb:
+                pt = prev.findall(q("t"))
+                pt[-1].text = "".join(t.text or "" for t in pt) + "".join(t.text or "" for t in r.findall(q("t")))
+                pt[-1].set(XML_SPACE, "preserve")
+                for t in pt[:-1]:
+                    prev.remove(t)
+                p.remove(r)
+                continue
+        prev = r
+
+
+def transform_cell(tc, funcs, track, ids, author, log, where):
+    """Apply text fixes to plain runs in a cell. Runs inside existing tracked changes and runs
+    holding tabs, breaks, fields, or drawings are left untouched and counted as skipped."""
+    skipped = 0
+    for p in tc.iter(q("p")):
+        skipped += sum(1 for r in p.iter(q("r")) if in_revision(r, p))
+        merge_plain_runs(p)
+        for r in list(p.findall(q("r"))):
+            ts = r.findall(q("t"))
+            if not ts:
+                continue
+            if any(ch.tag not in (q("rPr"), q("t")) for ch in r):
+                skipped += 1
+                continue
+            old = "".join(t.text or "" for t in ts)
+            new = old
+            for f in funcs:
+                new = f(new)
+            if new != old:
+                replace_run_text(r, old, new, track, ids, author)
+                log.append(f"| {where} | `{old.strip()}` | `{new.strip()}` |")
+    return skipped
+
+
+# ---------------- layout ----------------
+def border(tag, val="single", sz="8"):
+    el = etree.Element(q(tag))
+    el.set(q("val"), val)
+    if val != "nil":
+        el.set(q("sz"), sz)
+        el.set(q("space"), "0")
+        el.set(q("color"), "000000")
+    return el
+
+
+def set_child(parent, tag, el, order_before=None):
+    old = parent.find(q(tag))
+    if old is not None:
+        parent.replace(old, el)
+    else:
+        parent.append(el)
+
+
+def format_layout(tbl, style, log, label):
+    changes = []
+    tblpr = tbl.find(q("tblPr"))
+    if tblpr is None:
+        tblpr = etree.SubElement(tbl, q("tblPr"))
+        tbl.insert(0, tblpr)
+    tb = etree.Element(q("tblBorders"))
+    for side, val in (("top", "single"), ("left", "nil"), ("bottom", "single"), ("right", "nil"),
+                      ("insideH", "nil"), ("insideV", "nil")):
+        tb.append(border(side, val))
+    old = tblpr.find(q("tblBorders"))
+    # schema order inside tblPr: tblStyle, ..., tblW, jc, ..., tblBorders, shd, tblLayout, tblCellMar, tblLook
+    if old is not None:
+        tblpr.replace(old, tb)
+    else:
+        anchor = None
+        for t in ("shd", "tblLayout", "tblCellMar", "tblLook", "tblCaption", "tblDescription"):
+            anchor = tblpr.find(q(t))
+            if anchor is not None:
+                break
+        if anchor is not None:
+            anchor.addprevious(tb)
+        else:
+            tblpr.append(tb)
+    changes.append("borders set to horizontal rules only (top, below header, bottom)")
+
+    rows = tbl.findall(q("tr"))
+    n_shade = n_color = n_side = 0
+    for ri, tr in enumerate(rows):
+        for ci, tc in enumerate(tr.findall(q("tc"))):
+            tcpr = tc.find(q("tcPr"))
+            if tcpr is None:
+                tcpr = etree.Element(q("tcPr"))
+                tc.insert(0, tcpr)
+            shd = tcpr.find(q("shd"))
+            if shd is not None and (shd.get(q("fill")) or "auto").lower() not in ("auto", "ffffff"):
+                tcpr.remove(shd)
+                n_shade += 1
+            tcb = tcpr.find(q("tcBorders"))
+            if tcb is not None:
+                for side in ("left", "right", "start", "end", "insideV", "insideH", "top", "bottom", "tl2br", "tr2bl"):
+                    el = tcb.find(q(side))
+                    if el is not None:
+                        tcb.remove(el)
+                        n_side += 1
+            if ri == 0:
+                if tcb is None:
+                    tcb = etree.Element(q("tcBorders"))
+                    # tcBorders goes after tcW/gridSpan/vMerge, before shd/vAlign
+                    anchor = None
+                    for t in ("shd", "noWrap", "tcMar", "textDirection", "tcFitText", "vAlign", "hideMark"):
+                        anchor = tcpr.find(q(t))
+                        if anchor is not None:
+                            break
+                    if anchor is not None:
+                        anchor.addprevious(tcb)
+                    else:
+                        tcpr.append(tcb)
+                tcb.append(border("bottom"))
+            elif tcb is not None and len(tcb) == 0:
+                tcpr.remove(tcb)
+            for p in tc.iter(q("p")):
+                ppr = p.find(q("pPr"))
+                if ppr is not None and ppr.find(q("shd")) is not None:
+                    ppr.remove(ppr.find(q("shd")))
+                    n_shade += 1
+                for rpr in p.iter(q("rPr")):
+                    for tag in ("color", "highlight", "shd"):
+                        el = rpr.find(q(tag))
+                        if el is not None and (tag != "color" or (el.get(q("val")) or "auto").lower() not in ("auto", "000000")):
+                            rpr.remove(el)
+                            n_color += 1
+                if style == "apa":
+                    if ppr is None:
+                        ppr = etree.Element(q("pPr"))
+                        p.insert(0, ppr)
+                    jc = ppr.find(q("jc"))
+                    want = "left" if ci == 0 else "center"
+                    if jc is None:
+                        jc = etree.Element(q("jc"))
+                        # jc comes late in pPr; before rPr/sectPr/pPrChange
+                        anchor = None
+                        for t in ("textDirection", "textAlignment", "textboxTightWrap", "outlineLvl", "divId", "cnfStyle", "rPr", "sectPr", "pPrChange"):
+                            anchor = ppr.find(q(t))
+                            if anchor is not None:
+                                break
+                        if anchor is not None:
+                            anchor.addprevious(jc)
+                        else:
+                            ppr.append(jc)
+                    jc.set(q("val"), want)
+    if n_shade:
+        changes.append(f"{n_shade} shading setting(s) removed")
+    if n_color:
+        changes.append(f"{n_color} text color/highlight setting(s) removed")
+    if n_side:
+        changes.append(f"{n_side} cell-level border(s) removed")
+    if style == "apa":
+        changes.append("stub column left-aligned, other cells centered")
+    if rows:
+        trpr = rows[0].find(q("trPr"))
+        if trpr is None:
+            trpr = etree.Element(q("trPr"))
+            anchor = rows[0].find(q("tblPrEx"))
+            if anchor is not None:
+                anchor.addnext(trpr)
+            else:
+                rows[0].insert(0, trpr)
+        if trpr.find(q("tblHeader")) is None:
+            th = etree.Element(q("tblHeader"))
+            anchor = None
+            for t in ("ins", "del", "trPrChange"):
+                anchor = trpr.find(q(t))
+                if anchor is not None:
+                    break
+            if anchor is not None:
+                anchor.addprevious(th)
+            else:
+                trpr.append(th)
+            changes.append("header row set to repeat on each page")
+    log.append(f"\n**{label}: layout**\n")
+    for c in changes:
+        log.append(f"- {c}")
+
+
+def main():
+    global etree
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("path")
+    ap.add_argument("--style", choices=["ama", "apa"], required=True)
+    ap.add_argument("-o", "--output", required=True)
+    ap.add_argument("--round-small-pct", action="store_true")
+    ap.add_argument("--include-supplement", action="store_true")
+    ap.add_argument("--no-track", action="store_true")
+    ap.add_argument("--author", default="Table formatter")
+    a = ap.parse_args()
+    from lxml import etree as _et
+    etree = _et
+    src, dst = Path(a.path), Path(a.output)
+    if src.resolve() == dst.resolve():
+        sys.exit("Output must be a different file; the original is never overwritten.")
+    with zipfile.ZipFile(src) as z:
+        xml = z.read("word/document.xml")
+    root = etree.fromstring(xml)
+    ids = Ids(max([int(x) for x in re.findall(rb'w:id="(\d+)"', xml)] or [0]) + 1000)
+    body = root.find(q("body"))
+
+    items = []
+
+    def walk(node):
+        for ch in node:
+            if ch.tag == q("p"):
+                items.append(("p", ch))
+            elif ch.tag == q("tbl"):
+                items.append(("tbl", ch))
+            elif ch.tag == q("sdt"):
+                c = ch.find(q("sdtContent"))
+                if c is not None:
+                    walk(c)
+    walk(body)
+
+    log = [f"# Table formatting change log ({a.style.upper()} style)\n",
+           f"Source: `{src.name}`  \nOutput: `{dst.name}`  \nText changes are {'applied directly' if a.no_track else 'tracked changes by \"' + a.author + '\"'}; layout changes are applied directly and listed below.\n"]
+    in_supp, last_title, n_done, skipped_total = False, None, 0, 0
+    for kind, node in items:
+        if kind == "p":
+            t = "".join(x.text or "" for x in node.iter(q("t"))).strip()
+            if re.fullmatch(r"(supplement(ary|al)?( material| online content)?( \d+)?|emethods|eappendix)", t, re.I):
+                in_supp = True
+            if re.match(r"^e?table\s*\d+", t, re.I):
+                last_title = t[:60]
+            continue
+        if in_supp and not a.include_supplement:
+            continue
+        n_done += 1
+        label = last_title or f"Table {n_done}"
+        format_layout(node, a.style, log, label)
+        rows = node.findall(q("tr"))
+        header = [cell_text(tc).strip() for tc in rows[0].findall(q("tc"))] if rows else []
+        pcols = {j for j, h in enumerate(header) if PVAL_COL.match(h)}
+        col_n = {}
+        for j, h in enumerate(header):
+            m = re.search(r"\b[nN]\s*=\s*([\d,  ]+)", h)
+            if m:
+                col_n[j] = int(re.sub(r"[^\d]", "", m.group(1)))
+        for r in rows[1:4]:
+            tcs = r.findall(q("tc"))
+            if tcs and re.match(r"(number of participants|no\. of participants|^n$|total)", cell_text(tcs[0]).strip(), re.I):
+                for j, tc in enumerate(tcs[1:], start=1):
+                    m = re.fullmatch(r"\s*([\d,]+)\s*", cell_text(tc))
+                    if m and j not in col_n:
+                        col_n[j] = int(m.group(1).replace(",", ""))
+        log.append(f"\n**{label}: text**\n\n| Cell | Before | After |\n|---|---|---|")
+        before = len(log)
+        for ri, tr in enumerate(rows):
+            tcs = tr.findall(q("tc"))
+            stub = cell_text(tcs[0]).strip()[:30] if tcs else ""
+            for ci, tc in enumerate(tcs):
+                if ci == 0:
+                    continue  # stub labels are words, leave them
+                funcs = []
+                if ri == 0:
+                    funcs.append(lambda s: fix_separators(s, a.style))
+                else:
+                    if ci in pcols:
+                        funcs.append(lambda s: fix_p(s, a.style))
+                    else:
+                        funcs.append(fix_minus)
+                        funcs.append(lambda s: fix_separators(s, a.style))
+                        if a.round_small_pct and a.style == "ama" and col_n.get(ci, 1000) < 100:
+                            funcs.append(round_pct)
+                where = f"{stub or 'header'} / {header[ci][:25] if ci < len(header) else ci + 1}"
+                skipped_total += transform_cell(tc, funcs, not a.no_track, ids, a.author, log, where)
+        if len(log) == before:
+            log.append("| (no text changes) | | |")
+
+    if n_done == 0:
+        sys.exit("No tables found to format.")
+    if skipped_total:
+        log.append(f"\n> {skipped_total} run(s) were left as they are because they sit inside existing tracked changes or contain tabs, line breaks, or fields. Accept or reject earlier changes and fix tab-aligned cells, then run again for a complete pass.")
+    log.append("\nNot changed by this tool (review by hand): ± (use mean (SD) or separate M and SD columns), decimal places other than the opt-in rounding, P values with more than 3 decimals, footnote markers, titles, and notes.")
+
+    tmp = Path(tempfile.mkdtemp())
+    with zipfile.ZipFile(src) as zin, zipfile.ZipFile(tmp / "out.docx", "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            data = zin.read(item.filename)
+            if item.filename == "word/document.xml":
+                data = etree.tostring(root, xml_declaration=True, encoding="UTF-8", standalone=True)
+            zout.writestr(item, data)
+    shutil.move(str(tmp / "out.docx"), dst)
+    log_path = dst.with_suffix(".changes.md")
+    log_path.write_text("\n".join(log) + "\n", encoding="utf8")
+    n_text = sum(1 for line in log if line.startswith("| ") and "(no text changes)" not in line and "Cell |" not in line and not line.startswith("|---"))
+    print(f"Formatted {n_done} table(s): {n_text} text change(s){' (tracked)' if not a.no_track else ''} plus layout changes.")
+    print(f"Output: {dst}\nChange log: {log_path}")
 
 
 if __name__ == "__main__":

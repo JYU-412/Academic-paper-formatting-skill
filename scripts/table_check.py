@@ -4,7 +4,6 @@
 Usage:
     python table_check.py manuscript.docx --style ama   # JAMA Network, JGA (AMA 11)
     python table_check.py manuscript.docx --style apa   # JGB, The Gerontologist, Innovation in Aging, PPAR (APA 7)
-    python table_check.py manuscript.docx --style ama --allow-asterisks   # JGA (AMA; asterisk P notes allowed)
 
 Checks every Word table before the Supplement (add --include-supplement to check
 eTables too) and reports, per table:
@@ -77,7 +76,7 @@ def style_borders(styles_root, style_id):
     return on
 
 
-def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
+def check_table(idx, tbl, title, styles_root, style):
     issues = defaultdict(list)
     tblpr = tbl.find(W + "tblPr")
     # --- vertical lines
@@ -242,8 +241,8 @@ def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
     syms = re.findall(r"[†‡§¶]", alltext)
     if syms:
         issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style == 'apa' else ''}.")
-    if style == "ama" and not allow_asterisks and re.search(r"\d\*|\*\s*$", alltext):
-        issues["Notes"].append("Asterisks found next to values. JAMA Network tables mark footnotes with superscript letters and generally report exact P values rather than significance asterisks.")
+    if style == "ama" and re.search(r"\d\*|\*\s*$", alltext):
+        issues["Notes"].append("Asterisks found next to values. JAMA style marks footnotes with superscript letters and reports exact P values instead of significance asterisks.")
 
     # --- title
     if not title:
@@ -252,6 +251,8 @@ def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False):
         words_n = len(re.sub(r"^table\s+\d+\.?\s*", "", title, flags=re.I).split())
         if style == "ama" and words_n > 15:
             issues["Title"].append(f"Title is {words_n} words; JAMA asks for a brief descriptive phrase, preferably 10-15 words.")
+        if style == "apa" and re.match(r"^table\s*\d+[.:]?\s+\S", title, re.I):
+            issues["Title"].append("APA puts the table number on its own line in bold (**Table 1**) and the title on the next line in italic Title Case, with no period after the number.")
         if re.search(r"\((?:[A-Z][a-z]+ )+(?:Study|Survey)[^)]*\d{4}\)", title):
             issues["Title"].append("Title includes a data source/year in parentheses; consider moving it to a table note.")
     return issues
@@ -262,7 +263,6 @@ def main():
     ap.add_argument("path")
     ap.add_argument("--style", choices=["ama", "apa"], required=True)
     ap.add_argument("--include-supplement", action="store_true")
-    ap.add_argument("--allow-asterisks", action="store_true", help="JGA: asterisk P value notes are allowed")
     a = ap.parse_args()
     p = Path(a.path)
     if p.suffix.lower() != ".docx":
@@ -306,7 +306,7 @@ def main():
                 continue
             n += 1
             title = last_title if since_title <= 2 else None
-            report.append((n, title, check_table(n, node, title, styles_root, a.style, a.allow_asterisks)))
+            report.append((n, title, check_table(n, node, title, styles_root, a.style)))
             last_title, since_title = None, 99
 
     if len(caption_titles) > n and not a.include_supplement:

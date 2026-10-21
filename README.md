@@ -18,7 +18,7 @@ A *skill* is a set of instructions that Claude loads when it's relevant. Once in
 Each skill covers the whole path from draft to accepted paper:
 
 - **Preparing:** a requirements card for your journal and article type; an abstract generated automatically from your manuscript's content, with the journal's required headings and word limit; Key Points (JAMA) or keywords and the Translational Significance statement (GSA), also drafted from your content; and a section-order check
-- **Polishing:** AMA or APA style, table and number formatting (an automatic table checker), number consistency across abstract, text, and tables, causal-language checks for observational designs, and a light clarity edit in your own voice
+- **Polishing:** AMA or APA style, table and number formatting (an automatic table checker, plus an optional table formatter that fixes your tables in a copy of the file), a page layout and heading check, number consistency across abstract, text, and tables, causal-language checks for observational designs, and a light clarity edit in your own voice
 - **Fitting the limits:** an exact word-count dashboard, trim-to-fit suggestions with every cut tracked, and ideas for what to move to the supplement
 - **Submitting:** reporting-guideline mapping (STROBE, CONSORT, PRISMA, and others), reference checks, title page and required statements, an anonymization check for blinded files (GSA), cover letter, and a mock peer review
 - **Revising:** a point-by-point response-to-reviewers table, and retargeting to another journal after a rejection
@@ -28,6 +28,8 @@ Each skill covers the whole path from draft to accepted paper:
 - **Fewer desk rejections for format.** Word limits, missing Key Points, wrong abstract headings, ageist terms, or a missing Data Availability statement can get a paper returned before review. The skill checks all of these against current rules.
 - **Accurate word counts.** The built-in counter applies each journal's own definition of what counts: main text only (JAMA, JGB, *The Gerontologist*, *Innovation in Aging*), title page and abstract included (JGA), or references included (PPAR). It also counts tracked changes from co-authors as accepted, which Word's own counter on a draft with unaccepted changes won't do.
 - **Tables checked cell by cell.** A built-in table checker flags vertical lines, shading, values lined up with tabs or stacked with line breaks, empty cells, mixed decimal places, percentages with decimals in small groups (JAMA), hyphens used as minus signs, ±, P values like 0.001 or .000, and symbol footnote markers, following AMA (JAMA, JGA) or APA (JGB, *The Gerontologist*, *Innovation in Aging*, PPAR) conventions.
+- **Page layout and headings checked.** The layout checker reads your file the way Word renders it and reports font and size, double spacing, margins, justification, page and line numbers, missing page breaks before sections and tables, footnotes (not allowed at GSA journals), heading levels (APA 7 for GSA journals), leftover tracked changes and comments, and your name in the file properties of a blinded manuscript.
+- **Tables formatted for you, if you ask.** Say *"format my tables"* and the skill writes a new copy of your manuscript with horizontal rules only, no shading, a repeating header row, APA alignment where it applies, and P values, minus signs, and number separators fixed as tracked changes you can accept or reject. It never changes your numbers, and it writes a change log. Your original file is never touched.
 - **Your voice stays yours.** Edits and trims cut redundancy before rewriting, reuse your own phrasing, and come with a change log or Word comments, so you accept or reject each change.
 - **Nothing invented.** Abstracts, Key Points, and responses are built only from what's in your manuscript or what you say. Missing details become placeholders like `[CI NEEDED]`, never made-up numbers.
 - **Pick only what you need.** Each run starts with a menu grouped by stage, so a quick abstract check doesn't turn into a full review.
@@ -66,6 +68,7 @@ To share them with a project team instead, copy them into `.claude/skills/` insi
    - *"I'm submitting to JGB Social Sciences. Check the word count and draft the abstract."*
    - *"Write the Translational Significance statement for Innovation in Aging."*
    - *"Here are the reviewer comments from The Gerontologist. Draft a response table."*
+   - *"Check my page layout and headings for JGB, then format my tables."*
    - In Claude Code you can also type `/jama-manuscript-prep` or `/gsa-manuscript-prep`.
 3. **Confirm the basics.** Claude infers the journal, section, article type, and study design from your message and manuscript, and asks only about what's missing.
 4. **Pick from the menu.** If your request was general, Claude shows the menu by stage (Preparing, Polishing, Fitting the limits, Submitting, Revising). Reply with numbers ("1, 9, 10"), a stage ("all of Submitting"), or "everything".
@@ -86,7 +89,7 @@ To share them with a project team instead, copy them into `.claude/skills/` insi
 >
 > **Trim suggestions:** 14 Word comments saving about 450 words, each with replacement text built from your own sentences.
 
-## The word counters and table checker (optional, no Claude needed)
+## The word counters, checkers, and table formatter (optional, no Claude needed)
 
 These tools are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3 and `lxml` (`pip install lxml`).
 
@@ -109,6 +112,13 @@ python scripts/gsa_count.py blinded.docx --text-limit 6000 --statement-limit 100
 python scripts/table_check.py manuscript.docx --style ama
 python scripts/table_check.py manuscript.docx --style apa
 python scripts/table_check.py manuscript.docx --style ama --allow-asterisks   # JGA
+
+# Page layout and headings: jama, jga, jgb, tg, ia, ppar (add --blinded for the anonymized file)
+python scripts/layout_check.py manuscript.docx --journal jgb --blinded
+
+# Format tables into a NEW file, with text fixes as tracked changes and a change log
+python scripts/table_format.py manuscript.docx --style ama -o manuscript_tables.docx
+python scripts/table_format.py manuscript.docx --style apa -o manuscript_tables.docx
 ```
 
 The counters detect sections from standard headings, so check the "Sections found" line in the output. If a draft has no Introduction heading, the long paragraphs before Methods are counted as the Introduction.
@@ -142,12 +152,14 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 
 ```
 skills/
-  jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes the word counter and table checker)
-  gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes the word counter and table checker)
+  jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes all four tools)
+  gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes all four tools)
 scripts/
   jama_count.py                   standalone JAMA word counter
   gsa_count.py                    standalone GSA word counter
   table_check.py                  standalone table formatting checker (AMA or APA)
+  layout_check.py                 standalone page layout and heading checker
+  table_format.py                 standalone table formatter (writes a new file)
 dist/
   jama-manuscript-prep.zip        ready to upload to Claude
   gsa-manuscript-prep.zip         ready to upload to Claude
