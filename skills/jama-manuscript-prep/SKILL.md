@@ -915,6 +915,7 @@ Write this to the scratchpad as `table_check.py` before running it. Use `--style
 Usage:
     python table_check.py manuscript.docx --style ama   # JAMA Network, JGA (AMA 11)
     python table_check.py manuscript.docx --style apa   # JGB, The Gerontologist, Innovation in Aging, PPAR (APA 7)
+    python table_check.py manuscript.docx --style ama --allow-asterisks   # JGA (AMA; asterisk P notes allowed)
 
 Checks every Word table before the Supplement (add --include-supplement to check
 eTables too) and reports, per table:
@@ -987,7 +988,14 @@ def style_borders(styles_root, style_id):
     return on
 
 
-def check_table(idx, tbl, title, styles_root, style):
+def has_decimal_tab(tc):
+    for t in tc.iter(W + "tab"):
+        if t.getparent().tag == W + "tabs" and t.get(W + "val") == "decimal":
+            return True
+    return False
+
+
+def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False, decimal_align=False):
     issues = defaultdict(list)
     tblpr = tbl.find(W + "tblPr")
     # --- vertical lines
@@ -1125,10 +1133,10 @@ def check_table(idx, tbl, title, styles_root, style):
     commas = [c for r in rows[1:] for c in r[1:] if re.search(r"\b\d{1,3},\d{3}\b", c)]
     if commas and style == "ama":
         issues["Numbers"].append(f"{len(commas)} cell(s) use commas in numbers (e.g., \"{commas[0].strip()[:20]}\"). AMA style: no comma in 4-digit numbers (2449); a thin space for 5+ digits (12 450).")
-    if style == "apa":
+    if style in ("apa", "asa"):
         nocomma = [c for r in rows[1:] for c in r[1:] if re.search(r"(?<![\d.,])\d{4,}(?![\d.,])", c) and not re.search(r"\b(19|20)\d\d\b", c)]
         if nocomma:
-            issues["Numbers"].append(f"{len(nocomma)} cell(s) have 4+ digit numbers without commas (e.g., \"{nocomma[0].strip()[:20]}\"). APA style uses commas (2,449).")
+            issues["Numbers"].append(f"{len(nocomma)} cell(s) have 4+ digit numbers without commas (e.g., \"{nocomma[0].strip()[:20]}\"). {'APA' if style == 'apa' else 'ASA (Chicago-based)'} style uses commas (2,449).")
 
     # --- P values anywhere in the table
     alltext = "\n".join(c for r in rows for c in r)
@@ -1143,6 +1151,26 @@ def check_table(idx, tbl, title, styles_root, style):
         two_dec = [c.strip() for i in range(1, len(rows)) for j, c in enumerate(rows[i]) if j in pcols and re.fullmatch(r"\s*[<>=]?\s*0?\.\d{4,}\s*", c)]
         if two_dec:
             issues["P values"].append(f"P values with more than 3 decimals (e.g., \"{two_dec[0]}\"). AMA: 2 digits in general, 3 when P < .01, <.001 as the floor.")
+    if style == "asa":
+        stars = re.search(r"\d\*", alltext)
+        if stars and not re.search(r"(one|two)[- ]tailed", (title or "") + alltext, re.I):
+            issues["Notes"].append("Significance asterisks are used; ASA journals ask you to state in the note whether tests are one- or two-tailed (e.g., \"*p < .05, **p < .01, ***p < .001 (two-tailed tests)\"). Don't mark p < .10 as significant.")
+    if decimal_align:
+        numeric_cells = 0
+        aligned = 0
+        for tr_i, tr in enumerate(tbl.iter(W + "tr")):
+            if tr_i == 0:
+                continue
+            for ci, tc in enumerate(tr.findall(W + "tc")):
+                if ci == 0:
+                    continue
+                txt = text_of(tc).strip()
+                if re.fullmatch(r"[\u2212\-<>]?\s*\d[\d,]*(\.\d+)?(\*{0,3})?(\s*\(.*\))?\s*", txt):
+                    numeric_cells += 1
+                    if has_decimal_tab(tc):
+                        aligned += 1
+        if numeric_cells and aligned < numeric_cells:
+            issues["Construction"].append(f"{numeric_cells - aligned} of {numeric_cells} numeric cell(s) are not aligned on the decimal point. JHSB asks to align numbers by decimal; the table formatter's --decimal-align option sets decimal tabs in each cell.")
     if style == "apa" and pcols:
         hdr = header[min(pcols)]
         if hdr and not re.match(r"^\s*p\b", hdr):
@@ -1151,9 +1179,9 @@ def check_table(idx, tbl, title, styles_root, style):
     # --- footnote markers
     syms = re.findall(r"[†‡§¶]", alltext)
     if syms:
-        issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style == 'apa' else ''}.")
-    if style == "ama" and re.search(r"\d\*|\*\s*$", alltext):
-        issues["Notes"].append("Asterisks found next to values. JAMA style marks footnotes with superscript letters and reports exact P values instead of significance asterisks.")
+        issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style in ('apa', 'asa') else ''}. (PRPR is an exception: it uses \u2020 for p < .10.)")
+    if style == "ama" and not allow_asterisks and re.search(r"\d\*|\*\s*$", alltext):
+        issues["Notes"].append("Asterisks found next to values. JAMA Network tables mark footnotes with superscript letters and generally report exact P values rather than significance asterisks.")
 
     # --- title
     if not title:
@@ -1172,8 +1200,10 @@ def check_table(idx, tbl, title, styles_root, style):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("path")
-    ap.add_argument("--style", choices=["ama", "apa"], required=True)
+    ap.add_argument("--style", choices=["ama", "apa", "asa"], required=True)
+    ap.add_argument("--decimal-align", action="store_true", help="flag numeric cells not aligned on the decimal point (JHSB)")
     ap.add_argument("--include-supplement", action="store_true")
+    ap.add_argument("--allow-asterisks", action="store_true", help="JGA: asterisk P value notes are allowed")
     a = ap.parse_args()
     p = Path(a.path)
     if p.suffix.lower() != ".docx":
@@ -1217,7 +1247,7 @@ def main():
                 continue
             n += 1
             title = last_title if since_title <= 2 else None
-            report.append((n, title, check_table(n, node, title, styles_root, a.style)))
+            report.append((n, title, check_table(n, node, title, styles_root, a.style, a.allow_asterisks, a.decimal_align)))
             last_title, since_title = None, 99
 
     if len(caption_titles) > n and not a.include_supplement:
@@ -1258,6 +1288,8 @@ Usage:
     python layout_check.py manuscript.docx --journal tg     # The Gerontologist
     python layout_check.py manuscript.docx --journal ia     # Innovation in Aging
     python layout_check.py manuscript.docx --journal ppar   # Public Policy & Aging Report
+    Sociology and demography: asr, ajs, sf, ars, socius, esr, bjs, jhsb, ssm, shi, demography,
+    pdr, prpr, alcr, ssr, rssm, smx (Sociological Methodology), smr, sre
     add --blinded when checking the anonymized file
 
 Checks the file as Word would render it (styles and defaults resolved):
@@ -1305,11 +1337,55 @@ RULES = {
                  newpage=["references", "tables"], each_table_page=True, apa_headings=True),
 }
 
+# Sociology and demography journals (checked Oct 2026 where pages were reachable; "sug" where not stated)
+def _soc(name, **kw):
+    base = dict(name=name, font=None, sizes=(12,), size_src="sug", font_src=None, double="sug", ragged="sug",
+                margins=None, pagenum="sug", lines=None, footnotes=None, newpage=["references"],
+                each_table_page=False, apa_headings=False, word_notes=None, no_intro_heading=False,
+                caps_l1=False)
+    base.update(kw)
+    return base
+
+
+RULES.update({
+    "asr": _soc("American Sociological Review", font="Times New Roman", size_src="req", font_src="req", double="req",
+                margins=1440, pagenum="none", word_notes="sug", newpage=["references"]),
+    "jhsb": _soc("Journal of Health and Social Behavior", font="Times New Roman", size_src="req", font_src="req",
+                 double="req", margins=1440, word_notes="req", no_intro_heading=True,
+                 newpage=["text", "notes", "references", "tables"], each_table_page=True),
+    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", double="sug", margins=1440, word_notes="sug"),
+    "smx": _soc("Sociological Methodology", font="Times New Roman", size_src="req", font_src="req", double="req",
+                margins=1800, word_notes="sug"),
+    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800),
+    "socius": _soc("Socius", double="req", pagenum="req"),
+    "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
+                newpage=["references", "tables"]),
+    "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
+    "ars": _soc("Annual Review of Sociology", size_src="req", double="req"),
+    "esr": _soc("European Sociological Review", double="req", pagenum="req"),
+    "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
+    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",
+                       newpage=["references", "tables"], each_table_page=True),
+    "prpr": _soc("Population Research and Policy Review", size_src="req", double="req", ragged="req", margins=1440,
+                 pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
+    "ssm": _soc("Social Science & Medicine (and SSM journals)", ragged="req", pagenum="req", lines="req",
+                footnotes="req", apa_headings=True),
+    "shi": _soc("Sociology of Health & Illness"),
+    "pdr": _soc("Population and Development Review"),
+    "alcr": _soc("Advances in Life Course Research", pagenum="sug", lines="sug"),
+    "ssr": _soc("Social Science Research", pagenum="sug", lines="sug"),
+    "rssm": _soc("Research in Social Stratification and Mobility", pagenum="sug", lines="sug"),
+})
+for _r in RULES.values():
+    for k, v in dict(word_notes=None, no_intro_heading=False, caps_l1=False).items():
+        _r.setdefault(k, v)
+
 SECTION_PATTERNS = {
     "key_points": r"key points",
     "abstract": r"(structured )?abstract",
     "text": r"(introduction|background)",
-    "references": r"(references|bibliography)",
+    "references": r"(references|bibliography|literature cited)",
+    "notes": r"(notes|endnotes)",
     "legends": r"(figure legends?|figure captions?|figure titles?( and legends)?|table titles and figure captions)",
 }
 SMALL_WORDS = {"a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet", "as", "at", "by", "in", "of", "off",
@@ -1504,7 +1580,9 @@ def main():
     if margins_bad:
         add("Page setup", f"Margins are not 1 inch on every side: {margins_bad[0]}.", "req" if a.journal == "jgb" else "sug")
     if lnnum and rules["lines"] == "none":
-        add("Page setup", "Line numbering is on. JGB Social Sciences asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
+        add("Page setup", f"Line numbering is on. {rules['name']} asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
+    elif not lnnum and rules["lines"] in ("req", "sug"):
+        add("Page setup", "No line numbers. Turn them on (Layout > Line Numbers > Continuous).", rules["lines"])
     elif lnnum:
         add("Page setup", "Line numbering is on. That is fine for review unless the journal says otherwise.")
 
@@ -1515,7 +1593,9 @@ def main():
             x = z.read(n).decode("utf8", "ignore")
             if re.search(r"instrText[^>]*>\s*PAGE\b|fldSimple[^>]*instr=\"\s*PAGE\b", x):
                 pg_field = True
-    if not pg_field:
+    if pg_field and rules["pagenum"] == "none":
+        add("Page setup", f"Page numbers found. {rules['name']} asks authors to remove page numbers (the system renumbers the file).", "req")
+    if not pg_field and rules["pagenum"] != "none":
         add("Page setup", "No page numbers found in the header or footer. Insert page numbers (Insert > Page Number)"
             + (", numbered consecutively from the title page." if a.journal == "jama" else "; reviewers cite comments by page."),
             "req" if rules["pagenum"] == "req" else "sug")
@@ -1629,7 +1709,11 @@ def main():
         if part in names:
             x = etree.fromstring(z.read(part))
             real = [f for f in x if f.get(W + "type") not in ("separator", "continuationSeparator", "continuationNotice")]
-            if real and rules["footnotes"] == "req":
+            if real and rules.get("word_notes"):
+                add("Structure", f"{len(real)} Word {label}(s) found. {rules['name']} wants notes typed in a separate NOTES section after the text (superscript numbers in the text), not Word's built-in note function.", rules["word_notes"])
+            elif real and rules["footnotes"] == "req" and a.journal == "ssm":
+                add("Structure", f"{len(real)} {label}(s) found. Social Science & Medicine doesn't allow footnotes or endnotes; move the content into the text.", "req")
+            elif real and rules["footnotes"] == "req":
                 add("Structure", f"{len(real)} {label}(s) found. GSA journals don't allow footnotes or endnotes; move them to an \"Author Notes\" section (PPAR allows up to 5 short endnotes).", "req")
             elif real:
                 add("Structure", f"{len(real)} {label}(s) found. Check the journal's instructions; most medical journals fold notes into the text or the acknowledgments.")
@@ -1690,17 +1774,17 @@ def main():
             if kind == "p" and len(t.split()) >= 40:
                 found_sections["text"] = idx
                 break
-    labels = {"key_points": "Key Points", "abstract": "Abstract", "text": "the main text (Introduction)",
+    labels = {"notes": "Notes", "key_points": "Key Points", "abstract": "Abstract", "text": "the main text (Introduction)",
               "references": "References", "legends": "Figure legends/captions", "tables": "Tables"}
     for key in wanted:
         if key == "tables":
             continue
         if key in found_sections and not starts_new_page(found_sections[key]):
-            add("Structure", f"{labels[key]} does not start on a new page. Insert a page break before it (Ctrl/Cmd+Enter).", "req" if a.journal in ("jama", "jgb", "jga") else "sug")
+            add("Structure", f"{labels[key]} does not start on a new page. Insert a page break before it (Ctrl/Cmd+Enter).", "req" if a.journal in ("jama", "jgb", "jga", "jhsb", "prpr", "demography") else "sug")
     if caption_idx:
         not_new = [paras_info[i][2][:20] for i in caption_idx if not starts_new_page(i)]
         if rules["each_table_page"] and not_new:
-            add("Structure", f"{len(not_new)} table(s) don't start on their own page ({', '.join(not_new[:3])}...). GSA journals want each table on a separate page at the end of the file.", "req")
+            add("Structure", f"{len(not_new)} table(s) don't start on their own page ({', '.join(not_new[:3])}...). {rules['name']} wants each table on a separate page at the end of the file.", "req" if a.journal in ("jga", "jgb", "tg", "ia", "ppar", "jhsb", "sf", "demography", "prpr", "bjs") else "sug")
         elif not rules["each_table_page"] and not_new and len(not_new) == len(caption_idx):
             add("Structure", "Tables don't start on a new page after the references/legends. JAMA asks for tables at the end of the manuscript file, starting on a new page.", "req")
 
@@ -1722,9 +1806,17 @@ def main():
         styled = sum(1 for h in headings if h["style"] and re.match(r"heading", h["style"], re.I))
         if styled < len(headings) / 2:
             add("Headings", "Most headings are bold body text rather than Word Heading styles. Applying Heading 1/2/3 styles keeps formatting consistent and gives editors a navigable outline (suggested).")
+        if rules.get("no_intro_heading") and any(h["text"].lower().rstrip(".:") == "introduction" for h in headings):
+            add("Headings", "Remove the \"Introduction\" heading: JHSB text starts with the full title and goes straight into the introduction, followed by Background, Data and Methods, Results, Discussion.", "req")
+        if rules.get("caps_l1"):
+            for h in headings:
+                low = h["text"].lower().rstrip(".:")
+                if low in ("introduction", "background", "data and methods", "results", "discussion and conclusion", "discussion", "conclusion", "references") and h["text"] != h["text"].upper():
+                    add("Headings", f"\"{h['text']}\": PRPR Level 1 headings are 14-pt bold ALL CAPS on their own line.", "req")
         if rules["apa_headings"]:
             main_names = {"introduction", "methods", "method", "results", "discussion", "conclusions", "conclusion",
-                          "research design and methods", "background and objectives", "discussion and implications", "implications"}
+                          "research design and methods", "background and objectives", "discussion and implications", "implications",
+                          "background", "data and methods", "findings", "discussion and conclusion"}
             for h, l in zip(headings, levels):
                 low = h["text"].lower().rstrip(".:")
                 if low in main_names and l != 1:
@@ -1738,7 +1830,8 @@ def main():
                         add("Headings", f"No \"{need.title()}\" heading. Innovation in Aging lists Background and Objectives, Research Design and Methods, Results, and Discussion and Implications as the text headings.", "req")
         else:
             # JAMA: check consistency within tier (same alignment/italics for same-looking headings)
-            main_names = {"introduction", "methods", "results", "discussion", "conclusions", "limitations"}
+            main_names = {"introduction", "methods", "results", "discussion", "conclusions", "limitations",
+                          "background", "data and methods", "findings", "conclusion"}
             fmt = {(h["jc"], h["i"]) for h in headings if h["text"].lower().rstrip(".:") in main_names - {"limitations"}}
             if len(fmt) > 1:
                 add("Headings", "Main section headings (Introduction, Methods, Results, Discussion, Conclusions) are formatted inconsistently (alignment or italics differ). Give them one style.")
@@ -1793,7 +1886,10 @@ original is never touched.
 Usage:
     python table_format.py manuscript.docx --style ama -o manuscript_tables.docx
     python table_format.py manuscript.docx --style apa -o manuscript_tables.docx
+    python table_format.py manuscript.docx --style asa -o manuscript_tables.docx   # sociology (ASA, Chicago)
 Options:
+    --decimal-align       align numeric cells on the decimal point with a decimal tab (JHSB requires it;
+                          optional elsewhere)
     --round-small-pct     (AMA) round percentages to whole numbers in groups with n < 100
     --include-supplement  also format eTables / supplementary tables
     --no-track            apply text fixes directly instead of as tracked changes
@@ -1871,7 +1967,7 @@ def fix_minus(text):
 
 
 def fix_separators(text, style):
-    if style == "ama":
+    if style == "ama":  # apa and asa both use commas
         def ama(m):
             digits = m.group(0).replace(",", "")
             if len(digits) <= 4:
@@ -1883,7 +1979,7 @@ def fix_separators(text, style):
             return " ".join(groups)
         return re.sub(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d,]|\.\d)", ama, text)
 
-    def apa(m):
+    def apa(m):  # also used for ASA/Chicago, which use commas too
         s = m.group(0)
         n = int(s)
         if 1900 <= n <= 2099 and len(s) == 4:
@@ -2020,6 +2116,57 @@ def set_child(parent, tag, el, order_before=None):
         parent.append(el)
 
 
+TABS_BEFORE = ("suppressAutoHyphens", "kinsoku", "wordWrap", "overflowPunct", "topLinePunct", "autoSpaceDE",
+               "autoSpaceDN", "bidi", "adjustRightInd", "snapToGrid", "spacing", "ind", "contextualSpacing",
+               "mirrorIndents", "suppressOverlap", "jc", "textDirection", "textAlignment", "textboxTightWrap",
+               "outlineLvl", "divId", "cnfStyle", "rPr", "sectPr", "pPrChange")
+NUMERIC_CELL = re.compile(r"[\u2212\-<>]?\s*\d[\d,\u2009]*(\.\d+)?(\*{0,3})?(\s*[\(\[].*[\)\]])?\s*")
+
+
+def decimal_align(tbl, log, label):
+    """Put a decimal tab in each numeric data cell so values line up on the decimal point."""
+    n = 0
+    rows = tbl.findall(q("tr"))
+    grid = [int(g.get(q("w"), 0)) for g in tbl.findall(f"{q('tblGrid')}/{q('gridCol')}")]
+    for ri, tr in enumerate(rows):
+        if ri == 0:
+            continue
+        for ci, tc in enumerate(tr.findall(q("tc"))):
+            if ci == 0 or not NUMERIC_CELL.fullmatch(cell_text(tc).strip() or "x"):
+                continue
+            tcw = tc.find(f"{q('tcPr')}/{q('tcW')}")
+            width = int(tcw.get(q("w"), 0)) if tcw is not None and tcw.get(q("type")) == "dxa" else (grid[ci] if ci < len(grid) else 1440)
+            txt = cell_text(tc).strip()
+            # put the decimal point a little left of center when a parenthetical follows
+            pos = max(360, int(width * (0.40 if "(" in txt or "[" in txt else 0.50)))
+            for p in tc.findall(q("p")):
+                ppr = p.find(q("pPr"))
+                if ppr is None:
+                    ppr = etree.Element(q("pPr"))
+                    p.insert(0, ppr)
+                old = ppr.find(q("tabs"))
+                if old is not None:
+                    ppr.remove(old)
+                tabs = etree.Element(q("tabs"))
+                tab = etree.SubElement(tabs, q("tab"))
+                tab.set(q("val"), "decimal")
+                tab.set(q("pos"), str(pos))
+                anchor = None
+                for t in TABS_BEFORE:
+                    anchor = ppr.find(q(t))
+                    if anchor is not None:
+                        break
+                if anchor is not None:
+                    anchor.addprevious(tabs)
+                else:
+                    ppr.append(tabs)
+                jc = ppr.find(q("jc"))
+                if jc is not None:
+                    jc.set(q("val"), "left")
+            n += 1
+    log.append(f"- {n} numeric cell(s) aligned on the decimal point (decimal tab)")
+
+
 def format_layout(tbl, style, log, label):
     changes = []
     tblpr = tbl.find(q("tblPr"))
@@ -2149,7 +2296,8 @@ def main():
     global etree
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("path")
-    ap.add_argument("--style", choices=["ama", "apa"], required=True)
+    ap.add_argument("--style", choices=["ama", "apa", "asa"], required=True)
+    ap.add_argument("--decimal-align", action="store_true")
     ap.add_argument("-o", "--output", required=True)
     ap.add_argument("--round-small-pct", action="store_true")
     ap.add_argument("--include-supplement", action="store_true")
@@ -2197,6 +2345,8 @@ def main():
         n_done += 1
         label = last_title or f"Table {n_done}"
         format_layout(node, a.style, log, label)
+        if a.decimal_align:
+            decimal_align(node, log, label)
         rows = node.findall(q("tr"))
         header = [cell_text(tc).strip() for tc in rows[0].findall(q("tc"))] if rows else []
         pcols = {j for j, h in enumerate(header) if PVAL_COL.match(h)}

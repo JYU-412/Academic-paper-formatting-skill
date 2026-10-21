@@ -4,6 +4,7 @@
 Usage:
     python table_check.py manuscript.docx --style ama   # JAMA Network, JGA (AMA 11)
     python table_check.py manuscript.docx --style apa   # JGB, The Gerontologist, Innovation in Aging, PPAR (APA 7)
+    python table_check.py manuscript.docx --style ama --allow-asterisks   # JGA (AMA; asterisk P notes allowed)
 
 Checks every Word table before the Supplement (add --include-supplement to check
 eTables too) and reports, per table:
@@ -76,7 +77,14 @@ def style_borders(styles_root, style_id):
     return on
 
 
-def check_table(idx, tbl, title, styles_root, style):
+def has_decimal_tab(tc):
+    for t in tc.iter(W + "tab"):
+        if t.getparent().tag == W + "tabs" and t.get(W + "val") == "decimal":
+            return True
+    return False
+
+
+def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False, decimal_align=False):
     issues = defaultdict(list)
     tblpr = tbl.find(W + "tblPr")
     # --- vertical lines
@@ -214,10 +222,10 @@ def check_table(idx, tbl, title, styles_root, style):
     commas = [c for r in rows[1:] for c in r[1:] if re.search(r"\b\d{1,3},\d{3}\b", c)]
     if commas and style == "ama":
         issues["Numbers"].append(f"{len(commas)} cell(s) use commas in numbers (e.g., \"{commas[0].strip()[:20]}\"). AMA style: no comma in 4-digit numbers (2449); a thin space for 5+ digits (12 450).")
-    if style == "apa":
+    if style in ("apa", "asa"):
         nocomma = [c for r in rows[1:] for c in r[1:] if re.search(r"(?<![\d.,])\d{4,}(?![\d.,])", c) and not re.search(r"\b(19|20)\d\d\b", c)]
         if nocomma:
-            issues["Numbers"].append(f"{len(nocomma)} cell(s) have 4+ digit numbers without commas (e.g., \"{nocomma[0].strip()[:20]}\"). APA style uses commas (2,449).")
+            issues["Numbers"].append(f"{len(nocomma)} cell(s) have 4+ digit numbers without commas (e.g., \"{nocomma[0].strip()[:20]}\"). {'APA' if style == 'apa' else 'ASA (Chicago-based)'} style uses commas (2,449).")
 
     # --- P values anywhere in the table
     alltext = "\n".join(c for r in rows for c in r)
@@ -232,6 +240,26 @@ def check_table(idx, tbl, title, styles_root, style):
         two_dec = [c.strip() for i in range(1, len(rows)) for j, c in enumerate(rows[i]) if j in pcols and re.fullmatch(r"\s*[<>=]?\s*0?\.\d{4,}\s*", c)]
         if two_dec:
             issues["P values"].append(f"P values with more than 3 decimals (e.g., \"{two_dec[0]}\"). AMA: 2 digits in general, 3 when P < .01, <.001 as the floor.")
+    if style == "asa":
+        stars = re.search(r"\d\*", alltext)
+        if stars and not re.search(r"(one|two)[- ]tailed", (title or "") + alltext, re.I):
+            issues["Notes"].append("Significance asterisks are used; ASA journals ask you to state in the note whether tests are one- or two-tailed (e.g., \"*p < .05, **p < .01, ***p < .001 (two-tailed tests)\"). Don't mark p < .10 as significant.")
+    if decimal_align:
+        numeric_cells = 0
+        aligned = 0
+        for tr_i, tr in enumerate(tbl.iter(W + "tr")):
+            if tr_i == 0:
+                continue
+            for ci, tc in enumerate(tr.findall(W + "tc")):
+                if ci == 0:
+                    continue
+                txt = text_of(tc).strip()
+                if re.fullmatch(r"[\u2212\-<>]?\s*\d[\d,]*(\.\d+)?(\*{0,3})?(\s*\(.*\))?\s*", txt):
+                    numeric_cells += 1
+                    if has_decimal_tab(tc):
+                        aligned += 1
+        if numeric_cells and aligned < numeric_cells:
+            issues["Construction"].append(f"{numeric_cells - aligned} of {numeric_cells} numeric cell(s) are not aligned on the decimal point. JHSB asks to align numbers by decimal; the table formatter's --decimal-align option sets decimal tabs in each cell.")
     if style == "apa" and pcols:
         hdr = header[min(pcols)]
         if hdr and not re.match(r"^\s*p\b", hdr):
@@ -240,9 +268,9 @@ def check_table(idx, tbl, title, styles_root, style):
     # --- footnote markers
     syms = re.findall(r"[†‡§¶]", alltext)
     if syms:
-        issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style == 'apa' else ''}.")
-    if style == "ama" and re.search(r"\d\*|\*\s*$", alltext):
-        issues["Notes"].append("Asterisks found next to values. JAMA style marks footnotes with superscript letters and reports exact P values instead of significance asterisks.")
+        issues["Notes"].append(f"Symbol footnote markers ({' '.join(sorted(set(syms)))}) found. Use superscript lowercase letters (a, b, c) for footnotes{'; asterisks only for significance levels' if style in ('apa', 'asa') else ''}. (PRPR is an exception: it uses \u2020 for p < .10.)")
+    if style == "ama" and not allow_asterisks and re.search(r"\d\*|\*\s*$", alltext):
+        issues["Notes"].append("Asterisks found next to values. JAMA Network tables mark footnotes with superscript letters and generally report exact P values rather than significance asterisks.")
 
     # --- title
     if not title:
@@ -261,8 +289,10 @@ def check_table(idx, tbl, title, styles_root, style):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("path")
-    ap.add_argument("--style", choices=["ama", "apa"], required=True)
+    ap.add_argument("--style", choices=["ama", "apa", "asa"], required=True)
+    ap.add_argument("--decimal-align", action="store_true", help="flag numeric cells not aligned on the decimal point (JHSB)")
     ap.add_argument("--include-supplement", action="store_true")
+    ap.add_argument("--allow-asterisks", action="store_true", help="JGA: asterisk P value notes are allowed")
     a = ap.parse_args()
     p = Path(a.path)
     if p.suffix.lower() != ".docx":
@@ -306,7 +336,7 @@ def main():
                 continue
             n += 1
             title = last_title if since_title <= 2 else None
-            report.append((n, title, check_table(n, node, title, styles_root, a.style)))
+            report.append((n, title, check_table(n, node, title, styles_root, a.style, a.allow_asterisks, a.decimal_align)))
             last_title, since_title = None, 99
 
     if len(caption_titles) > n and not a.include_supplement:

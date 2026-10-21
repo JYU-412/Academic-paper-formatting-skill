@@ -1,16 +1,26 @@
 # Academic Paper Formatting Skills for Claude
 
-Two free [Claude skills](https://support.claude.com/en/articles/12512180-use-skills-in-claude) that help researchers prepare a manuscript for submission, and revise it after peer review, for these journals:
+Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-skills-in-claude) that help researchers prepare a manuscript for submission, and revise it after peer review, for these journals:
 
 | Skill | Journals |
 |---|---|
 | **`jama-manuscript-prep`** | JAMA Network journals: *JAMA*, *JAMA Network Open*, *JAMA Internal Medicine*, *JAMA Neurology*, *JAMA Psychiatry*, *JAMA Health Forum*, and the other JAMA specialty journals |
 | **`gsa-manuscript-prep`** | Gerontological Society of America journals: *Journals of Gerontology Series A* (Biological or Medical Sciences), *Series B* (Psychological or Social Sciences), *The Gerontologist*, *Innovation in Aging*, *Public Policy & Aging Report* |
+| **`sociology-manuscript-prep`** | Sociology and demography journals: *American Sociological Review*, *American Journal of Sociology*, *Social Forces*, *Annual Review of Sociology*, *Socius*, *European Sociological Review*, *British Journal of Sociology*, *Journal of Health and Social Behavior*, *Social Science & Medicine* and the SSM journals, *Sociology of Health & Illness*, *Demography*, *Population and Development Review*, *Population Research and Policy Review*, *Advances in Life Course Research*, *Social Science Research*, *Research in Social Stratification and Mobility*, *Sociological Methodology*, *Sociological Methods & Research*, *Sociology of Race and Ethnicity* |
 
-**Download:** [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) · [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip)
+**Download:** [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) · [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip) · [sociology-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/sociology-manuscript-prep.zip)
 
 
-## What's new (v1.2, October 2026)
+## What's new
+
+**v1.3 (October 2026)**
+
+- **New sociology and demography skill:** 19 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, ESR, BJS, Socius, and the SSM journals, with ASA, Chicago, APA, and Harvard style rules.
+- **Journal-specific word counts:** choose what counts toward the limit (text, notes, references, abstract, appendix, tables), since sociology journals differ.
+- **Decimal alignment:** the table formatter can line numbers up on the decimal point (required at JHSB).
+- **Verification labels:** each sociology journal is marked verified or "confirm" depending on whether its official author page could be read.
+
+**v1.2 (October 2026)**
 
 - **Page layout and heading checker:** flags font, spacing, margins, page numbers, missing page breaks, footnotes, heading levels, and leftover tracked changes or comments.
 - **Table formatter (on request):** say *"format my tables"* to get a new copy of your manuscript with journal-style tables; fixes appear as tracked changes, and your numbers and original file are never changed.
@@ -47,11 +57,11 @@ Each skill covers the whole path from draft to accepted paper:
 
 Available on Free, Pro, Max, Team, and Enterprise plans.
 
-1. Download [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) and/or [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip) (also in the [`dist/`](dist) folder). Don't unzip them.
+1. Download the skill(s) you need: [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip), [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip), [sociology-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/sociology-manuscript-prep.zip) (also in the [`dist/`](dist) folder). Don't unzip them.
 2. In Claude, open **Settings → Capabilities** and turn on **Code execution and file creation**. The skills need it to read Word files and run the word counter.
 3. Go to **Customize → Skills**.
 4. Click **+**, then **+ Create skill**, then **Upload a skill**, and choose the ZIP file.
-5. Make sure the skill's toggle is on. Repeat for the second skill if you want both.
+5. Make sure the skill's toggle is on. Repeat for each skill you want.
 
 On Team and Enterprise plans, an organization owner may need to enable code execution and skills first, under **Organization settings → Plugins & skills**. See Anthropic's guide: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude).
 
@@ -76,7 +86,8 @@ To share them with a project team instead, copy them into `.claude/skills/` insi
    - *"Write the Translational Significance statement for Innovation in Aging."*
    - *"Here are the reviewer comments from The Gerontologist. Draft a response table."*
    - *"Check my page layout and headings for JGB, then format my tables."*
-   - In Claude Code you can also type `/jama-manuscript-prep` or `/gsa-manuscript-prep`.
+   - *"Check this against ASR's requirements, counting notes and references toward the limit."*
+   - In Claude Code you can also type `/jama-manuscript-prep`, `/gsa-manuscript-prep`, or `/sociology-manuscript-prep`.
 3. **Confirm the basics.** Claude infers the journal, section, article type, and study design from your message and manuscript, and asks only about what's missing.
 4. **Pick from the menu.** If your request was general, Claude shows the menu by stage (Preparing, Polishing, Fitting the limits, Submitting, Revising). Reply with numbers ("1, 9, 10"), a stage ("all of Submitting"), or "everything".
 5. **Review the output.**
@@ -110,6 +121,9 @@ python scripts/gsa_count.py manuscript.docx --mode text --text-limit 5000 --abst
 # JGA Medical Sciences (title page + abstract count toward the limit)
 python scripts/gsa_count.py manuscript.docx --mode text+front --text-limit 5200
 
+# ASR: text, notes, and references count toward 15,000 words; each note <= 100 words
+python scripts/soc_count.py manuscript.docx --count text,notes,refs --text-limit 15000 --abstract-limit 200 --kw-min 4 --kw-max 5 --note-max 100
+
 # Innovation in Aging, checking the anonymized file for author names
 python scripts/gsa_count.py blinded.docx --text-limit 6000 --statement-limit 100 --authors "Surname1;Surname2"
 ```
@@ -119,13 +133,15 @@ python scripts/gsa_count.py blinded.docx --text-limit 6000 --statement-limit 100
 python scripts/table_check.py manuscript.docx --style ama
 python scripts/table_check.py manuscript.docx --style apa
 python scripts/table_check.py manuscript.docx --style ama --allow-asterisks   # JGA
+python scripts/table_check.py manuscript.docx --style asa --decimal-align     # JHSB and other ASA journals
 
-# Page layout and headings: jama, jga, jgb, tg, ia, ppar (add --blinded for the anonymized file)
+# Page layout and headings: jama, jga, jgb, tg, ia, ppar, asr, ajs, sf, socius, esr, bjs, jhsb, ssm, demography, prpr, smr, smx, sre, ... (add --blinded for the anonymized file)
 python scripts/layout_check.py manuscript.docx --journal jgb --blinded
 
 # Format tables into a NEW file, with text fixes as tracked changes and a change log
 python scripts/table_format.py manuscript.docx --style ama -o manuscript_tables.docx
 python scripts/table_format.py manuscript.docx --style apa -o manuscript_tables.docx
+python scripts/table_format.py manuscript.docx --style asa --decimal-align -o manuscript_tables.docx
 ```
 
 The counters detect sections from standard headings, so check the "Sections found" line in the output. If a draft has no Introduction heading, the long paragraphs before Methods are counted as the Introduction.
@@ -142,6 +158,12 @@ The counters detect sections from standard headings, so check the "Sections foun
 | The Gerontologist | 6000 (7000 qualitative, mixed, intervention) | main text | 250, structured | APA 7 |
 | Innovation in Aging | 6000 + 100-word Translational Significance | main text | 250, structured | APA 7 or AMA 11 |
 | Public Policy & Aging Report | 3500 (Policy Analysis) | text + references | — | APA 7 |
+| American Sociological Review | 15,000 | text + notes + references | 150-200 | ASA 7 |
+| Social Forces | 10,000 (≤10 tables and figure panels) | text + endnotes + references | no limit stated | Chicago author-date |
+| Journal of Health and Social Behavior | 10,000 | text + notes + references | <150 | ASA 7 |
+| Demography | 8,000 (≤8 tables + figures) | main text | ≤200 + 3-5 highlights | APA-based |
+| Population Research and Policy Review | 8,000-10,000 | main text | 150-250 | APA 7 + PRPR rules |
+| European Sociological Review | ~8,000 | text + endnotes + references | ≤200 | author-year |
 
 Journals revise their rules. **Each time it runs, the skill fetches the journal's live Instructions for Authors page, and the live page wins over these numbers.** If the page can't be reached, it says so.
 
@@ -153,7 +175,8 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 - **Decimal alignment isn't required.** JAMA Network aligns table columns in production and asks authors not to line up numbers with tabs or spaces; APA and the GSA journals center cell entries and don't require decimal alignment. What reviewers and editors do notice is inconsistent decimal places, which the table checker flags.
 - **Your science stays your call.** When a check finds a substantive issue (an outcome missing from the abstract, a mismatch between Methods and Results), the skill raises it as a question instead of changing your conclusions.
 - **Unpublished data.** Your manuscript is processed by Claude. Check your institution's and funder's policies on sharing unpublished work with AI tools, and your data use agreements (for example, for restricted survey data).
-- **Not affiliated** with the American Medical Association, JAMA Network, the Gerontological Society of America, or Oxford University Press. Journal names are used only to describe compatibility.
+- **Some sociology journals are marked "confirm."** The official author pages for Elsevier (*Social Science & Medicine* and the SSM journals, *Social Science Research*, *RSSM*, *Advances in Life Course Research*) and some Wiley journals (*Sociology of Health & Illness*, *Population and Development Review*) couldn't be read when the skill was built. The skill says which details to check, and asks you to open or paste the page if it can't fetch it. Corrections are welcome as issues.
+- **Not affiliated** with the American Medical Association, JAMA Network, the Gerontological Society of America, the American Sociological Association, the Population Association of America, Oxford University Press, or any journal publisher. Journal names are used only to describe compatibility.
 
 ## What's in this repository
 
@@ -161,15 +184,18 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 skills/
   jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes all four tools)
   gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes all four tools)
+  sociology-manuscript-prep/SKILL.md  sociology and demography skill (self-contained; includes all four tools)
 scripts/
   jama_count.py                   standalone JAMA word counter
   gsa_count.py                    standalone GSA word counter
+  soc_count.py                    standalone sociology word counter (choose what counts)
   table_check.py                  standalone table formatting checker (AMA or APA)
   layout_check.py                 standalone page layout and heading checker
   table_format.py                 standalone table formatter (writes a new file)
 dist/
   jama-manuscript-prep.zip        ready to upload to Claude
   gsa-manuscript-prep.zip         ready to upload to Claude
+  sociology-manuscript-prep.zip   ready to upload to Claude
 CHANGELOG.md
 LICENSE
 ```

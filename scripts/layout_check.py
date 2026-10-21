@@ -8,6 +8,8 @@ Usage:
     python layout_check.py manuscript.docx --journal tg     # The Gerontologist
     python layout_check.py manuscript.docx --journal ia     # Innovation in Aging
     python layout_check.py manuscript.docx --journal ppar   # Public Policy & Aging Report
+    Sociology and demography: asr, ajs, sf, ars, socius, esr, bjs, jhsb, ssm, shi, demography,
+    pdr, prpr, alcr, ssr, rssm, smx (Sociological Methodology), smr, sre
     add --blinded when checking the anonymized file
 
 Checks the file as Word would render it (styles and defaults resolved):
@@ -55,11 +57,55 @@ RULES = {
                  newpage=["references", "tables"], each_table_page=True, apa_headings=True),
 }
 
+# Sociology and demography journals (checked Oct 2026 where pages were reachable; "sug" where not stated)
+def _soc(name, **kw):
+    base = dict(name=name, font=None, sizes=(12,), size_src="sug", font_src=None, double="sug", ragged="sug",
+                margins=None, pagenum="sug", lines=None, footnotes=None, newpage=["references"],
+                each_table_page=False, apa_headings=False, word_notes=None, no_intro_heading=False,
+                caps_l1=False)
+    base.update(kw)
+    return base
+
+
+RULES.update({
+    "asr": _soc("American Sociological Review", font="Times New Roman", size_src="req", font_src="req", double="req",
+                margins=1440, pagenum="none", word_notes="sug", newpage=["references"]),
+    "jhsb": _soc("Journal of Health and Social Behavior", font="Times New Roman", size_src="req", font_src="req",
+                 double="req", margins=1440, word_notes="req", no_intro_heading=True,
+                 newpage=["text", "notes", "references", "tables"], each_table_page=True),
+    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", double="sug", margins=1440, word_notes="sug"),
+    "smx": _soc("Sociological Methodology", font="Times New Roman", size_src="req", font_src="req", double="req",
+                margins=1800, word_notes="sug"),
+    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800),
+    "socius": _soc("Socius", double="req", pagenum="req"),
+    "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
+                newpage=["references", "tables"]),
+    "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
+    "ars": _soc("Annual Review of Sociology", size_src="req", double="req"),
+    "esr": _soc("European Sociological Review", double="req", pagenum="req"),
+    "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
+    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",
+                       newpage=["references", "tables"], each_table_page=True),
+    "prpr": _soc("Population Research and Policy Review", size_src="req", double="req", ragged="req", margins=1440,
+                 pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
+    "ssm": _soc("Social Science & Medicine (and SSM journals)", ragged="req", pagenum="req", lines="req",
+                footnotes="req", apa_headings=True),
+    "shi": _soc("Sociology of Health & Illness"),
+    "pdr": _soc("Population and Development Review"),
+    "alcr": _soc("Advances in Life Course Research", pagenum="sug", lines="sug"),
+    "ssr": _soc("Social Science Research", pagenum="sug", lines="sug"),
+    "rssm": _soc("Research in Social Stratification and Mobility", pagenum="sug", lines="sug"),
+})
+for _r in RULES.values():
+    for k, v in dict(word_notes=None, no_intro_heading=False, caps_l1=False).items():
+        _r.setdefault(k, v)
+
 SECTION_PATTERNS = {
     "key_points": r"key points",
     "abstract": r"(structured )?abstract",
     "text": r"(introduction|background)",
-    "references": r"(references|bibliography)",
+    "references": r"(references|bibliography|literature cited)",
+    "notes": r"(notes|endnotes)",
     "legends": r"(figure legends?|figure captions?|figure titles?( and legends)?|table titles and figure captions)",
 }
 SMALL_WORDS = {"a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet", "as", "at", "by", "in", "of", "off",
@@ -254,7 +300,9 @@ def main():
     if margins_bad:
         add("Page setup", f"Margins are not 1 inch on every side: {margins_bad[0]}.", "req" if a.journal == "jgb" else "sug")
     if lnnum and rules["lines"] == "none":
-        add("Page setup", "Line numbering is on. JGB Social Sciences asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
+        add("Page setup", f"Line numbering is on. {rules['name']} asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
+    elif not lnnum and rules["lines"] in ("req", "sug"):
+        add("Page setup", "No line numbers. Turn them on (Layout > Line Numbers > Continuous).", rules["lines"])
     elif lnnum:
         add("Page setup", "Line numbering is on. That is fine for review unless the journal says otherwise.")
 
@@ -265,7 +313,9 @@ def main():
             x = z.read(n).decode("utf8", "ignore")
             if re.search(r"instrText[^>]*>\s*PAGE\b|fldSimple[^>]*instr=\"\s*PAGE\b", x):
                 pg_field = True
-    if not pg_field:
+    if pg_field and rules["pagenum"] == "none":
+        add("Page setup", f"Page numbers found. {rules['name']} asks authors to remove page numbers (the system renumbers the file).", "req")
+    if not pg_field and rules["pagenum"] != "none":
         add("Page setup", "No page numbers found in the header or footer. Insert page numbers (Insert > Page Number)"
             + (", numbered consecutively from the title page." if a.journal == "jama" else "; reviewers cite comments by page."),
             "req" if rules["pagenum"] == "req" else "sug")
@@ -379,7 +429,11 @@ def main():
         if part in names:
             x = etree.fromstring(z.read(part))
             real = [f for f in x if f.get(W + "type") not in ("separator", "continuationSeparator", "continuationNotice")]
-            if real and rules["footnotes"] == "req":
+            if real and rules.get("word_notes"):
+                add("Structure", f"{len(real)} Word {label}(s) found. {rules['name']} wants notes typed in a separate NOTES section after the text (superscript numbers in the text), not Word's built-in note function.", rules["word_notes"])
+            elif real and rules["footnotes"] == "req" and a.journal == "ssm":
+                add("Structure", f"{len(real)} {label}(s) found. Social Science & Medicine doesn't allow footnotes or endnotes; move the content into the text.", "req")
+            elif real and rules["footnotes"] == "req":
                 add("Structure", f"{len(real)} {label}(s) found. GSA journals don't allow footnotes or endnotes; move them to an \"Author Notes\" section (PPAR allows up to 5 short endnotes).", "req")
             elif real:
                 add("Structure", f"{len(real)} {label}(s) found. Check the journal's instructions; most medical journals fold notes into the text or the acknowledgments.")
@@ -440,17 +494,17 @@ def main():
             if kind == "p" and len(t.split()) >= 40:
                 found_sections["text"] = idx
                 break
-    labels = {"key_points": "Key Points", "abstract": "Abstract", "text": "the main text (Introduction)",
+    labels = {"notes": "Notes", "key_points": "Key Points", "abstract": "Abstract", "text": "the main text (Introduction)",
               "references": "References", "legends": "Figure legends/captions", "tables": "Tables"}
     for key in wanted:
         if key == "tables":
             continue
         if key in found_sections and not starts_new_page(found_sections[key]):
-            add("Structure", f"{labels[key]} does not start on a new page. Insert a page break before it (Ctrl/Cmd+Enter).", "req" if a.journal in ("jama", "jgb", "jga") else "sug")
+            add("Structure", f"{labels[key]} does not start on a new page. Insert a page break before it (Ctrl/Cmd+Enter).", "req" if a.journal in ("jama", "jgb", "jga", "jhsb", "prpr", "demography") else "sug")
     if caption_idx:
         not_new = [paras_info[i][2][:20] for i in caption_idx if not starts_new_page(i)]
         if rules["each_table_page"] and not_new:
-            add("Structure", f"{len(not_new)} table(s) don't start on their own page ({', '.join(not_new[:3])}...). GSA journals want each table on a separate page at the end of the file.", "req")
+            add("Structure", f"{len(not_new)} table(s) don't start on their own page ({', '.join(not_new[:3])}...). {rules['name']} wants each table on a separate page at the end of the file.", "req" if a.journal in ("jga", "jgb", "tg", "ia", "ppar", "jhsb", "sf", "demography", "prpr", "bjs") else "sug")
         elif not rules["each_table_page"] and not_new and len(not_new) == len(caption_idx):
             add("Structure", "Tables don't start on a new page after the references/legends. JAMA asks for tables at the end of the manuscript file, starting on a new page.", "req")
 
@@ -472,9 +526,17 @@ def main():
         styled = sum(1 for h in headings if h["style"] and re.match(r"heading", h["style"], re.I))
         if styled < len(headings) / 2:
             add("Headings", "Most headings are bold body text rather than Word Heading styles. Applying Heading 1/2/3 styles keeps formatting consistent and gives editors a navigable outline (suggested).")
+        if rules.get("no_intro_heading") and any(h["text"].lower().rstrip(".:") == "introduction" for h in headings):
+            add("Headings", "Remove the \"Introduction\" heading: JHSB text starts with the full title and goes straight into the introduction, followed by Background, Data and Methods, Results, Discussion.", "req")
+        if rules.get("caps_l1"):
+            for h in headings:
+                low = h["text"].lower().rstrip(".:")
+                if low in ("introduction", "background", "data and methods", "results", "discussion and conclusion", "discussion", "conclusion", "references") and h["text"] != h["text"].upper():
+                    add("Headings", f"\"{h['text']}\": PRPR Level 1 headings are 14-pt bold ALL CAPS on their own line.", "req")
         if rules["apa_headings"]:
             main_names = {"introduction", "methods", "method", "results", "discussion", "conclusions", "conclusion",
-                          "research design and methods", "background and objectives", "discussion and implications", "implications"}
+                          "research design and methods", "background and objectives", "discussion and implications", "implications",
+                          "background", "data and methods", "findings", "discussion and conclusion"}
             for h, l in zip(headings, levels):
                 low = h["text"].lower().rstrip(".:")
                 if low in main_names and l != 1:
@@ -488,7 +550,8 @@ def main():
                         add("Headings", f"No \"{need.title()}\" heading. Innovation in Aging lists Background and Objectives, Research Design and Methods, Results, and Discussion and Implications as the text headings.", "req")
         else:
             # JAMA: check consistency within tier (same alignment/italics for same-looking headings)
-            main_names = {"introduction", "methods", "results", "discussion", "conclusions", "limitations"}
+            main_names = {"introduction", "methods", "results", "discussion", "conclusions", "limitations",
+                          "background", "data and methods", "findings", "conclusion"}
             fmt = {(h["jc"], h["i"]) for h in headings if h["text"].lower().rstrip(".:") in main_names - {"limitations"}}
             if len(fmt) > 1:
                 add("Headings", "Main section headings (Introduction, Methods, Results, Discussion, Conclusions) are formatted inconsistently (alignment or italics differ). Give them one style.")

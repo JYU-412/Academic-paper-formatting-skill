@@ -6,7 +6,10 @@ original is never touched.
 Usage:
     python table_format.py manuscript.docx --style ama -o manuscript_tables.docx
     python table_format.py manuscript.docx --style apa -o manuscript_tables.docx
+    python table_format.py manuscript.docx --style asa -o manuscript_tables.docx   # sociology (ASA, Chicago)
 Options:
+    --decimal-align       align numeric cells on the decimal point with a decimal tab (JHSB requires it;
+                          optional elsewhere)
     --round-small-pct     (AMA) round percentages to whole numbers in groups with n < 100
     --include-supplement  also format eTables / supplementary tables
     --no-track            apply text fixes directly instead of as tracked changes
@@ -84,7 +87,7 @@ def fix_minus(text):
 
 
 def fix_separators(text, style):
-    if style == "ama":
+    if style == "ama":  # apa and asa both use commas
         def ama(m):
             digits = m.group(0).replace(",", "")
             if len(digits) <= 4:
@@ -96,7 +99,7 @@ def fix_separators(text, style):
             return " ".join(groups)
         return re.sub(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d,]|\.\d)", ama, text)
 
-    def apa(m):
+    def apa(m):  # also used for ASA/Chicago, which use commas too
         s = m.group(0)
         n = int(s)
         if 1900 <= n <= 2099 and len(s) == 4:
@@ -233,6 +236,57 @@ def set_child(parent, tag, el, order_before=None):
         parent.append(el)
 
 
+TABS_BEFORE = ("suppressAutoHyphens", "kinsoku", "wordWrap", "overflowPunct", "topLinePunct", "autoSpaceDE",
+               "autoSpaceDN", "bidi", "adjustRightInd", "snapToGrid", "spacing", "ind", "contextualSpacing",
+               "mirrorIndents", "suppressOverlap", "jc", "textDirection", "textAlignment", "textboxTightWrap",
+               "outlineLvl", "divId", "cnfStyle", "rPr", "sectPr", "pPrChange")
+NUMERIC_CELL = re.compile(r"[\u2212\-<>]?\s*\d[\d,\u2009]*(\.\d+)?(\*{0,3})?(\s*[\(\[].*[\)\]])?\s*")
+
+
+def decimal_align(tbl, log, label):
+    """Put a decimal tab in each numeric data cell so values line up on the decimal point."""
+    n = 0
+    rows = tbl.findall(q("tr"))
+    grid = [int(g.get(q("w"), 0)) for g in tbl.findall(f"{q('tblGrid')}/{q('gridCol')}")]
+    for ri, tr in enumerate(rows):
+        if ri == 0:
+            continue
+        for ci, tc in enumerate(tr.findall(q("tc"))):
+            if ci == 0 or not NUMERIC_CELL.fullmatch(cell_text(tc).strip() or "x"):
+                continue
+            tcw = tc.find(f"{q('tcPr')}/{q('tcW')}")
+            width = int(tcw.get(q("w"), 0)) if tcw is not None and tcw.get(q("type")) == "dxa" else (grid[ci] if ci < len(grid) else 1440)
+            txt = cell_text(tc).strip()
+            # put the decimal point a little left of center when a parenthetical follows
+            pos = max(360, int(width * (0.40 if "(" in txt or "[" in txt else 0.50)))
+            for p in tc.findall(q("p")):
+                ppr = p.find(q("pPr"))
+                if ppr is None:
+                    ppr = etree.Element(q("pPr"))
+                    p.insert(0, ppr)
+                old = ppr.find(q("tabs"))
+                if old is not None:
+                    ppr.remove(old)
+                tabs = etree.Element(q("tabs"))
+                tab = etree.SubElement(tabs, q("tab"))
+                tab.set(q("val"), "decimal")
+                tab.set(q("pos"), str(pos))
+                anchor = None
+                for t in TABS_BEFORE:
+                    anchor = ppr.find(q(t))
+                    if anchor is not None:
+                        break
+                if anchor is not None:
+                    anchor.addprevious(tabs)
+                else:
+                    ppr.append(tabs)
+                jc = ppr.find(q("jc"))
+                if jc is not None:
+                    jc.set(q("val"), "left")
+            n += 1
+    log.append(f"- {n} numeric cell(s) aligned on the decimal point (decimal tab)")
+
+
 def format_layout(tbl, style, log, label):
     changes = []
     tblpr = tbl.find(q("tblPr"))
@@ -362,7 +416,8 @@ def main():
     global etree
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("path")
-    ap.add_argument("--style", choices=["ama", "apa"], required=True)
+    ap.add_argument("--style", choices=["ama", "apa", "asa"], required=True)
+    ap.add_argument("--decimal-align", action="store_true")
     ap.add_argument("-o", "--output", required=True)
     ap.add_argument("--round-small-pct", action="store_true")
     ap.add_argument("--include-supplement", action="store_true")
@@ -410,6 +465,8 @@ def main():
         n_done += 1
         label = last_title or f"Table {n_done}"
         format_layout(node, a.style, log, label)
+        if a.decimal_align:
+            decimal_align(node, log, label)
         rows = node.findall(q("tr"))
         header = [cell_text(tc).strip() for tc in rows[0].findall(q("tc"))] if rows else []
         pcols = {j for j, h in enumerate(header) if PVAL_COL.match(h)}
