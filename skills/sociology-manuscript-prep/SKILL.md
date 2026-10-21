@@ -26,7 +26,7 @@ Present this menu so the author picks only what they need. Accept numbers, range
 **Preparing**
 1. Journal requirements card for the chosen journal and article type
 2. Abstract within the journal's limit and conventions
-3. Journal-specific extras: Highlights (Demography; required at SSM and SSM-MH, encouraged at SSM-PH and ALCR), the SSM editorial office, Relevance to Demography statement, Data Availability / replication statement (ESR, Social Forces, SMR, PRPR, AJS data-openness statement), running head (JHSB)
+3. Journal-specific extras: Highlights (Demography; required at SSM, SSM-MH, and RSSM, encouraged at SSM-PH, ALCR, and SSR), the SSM editorial office, Relevance to Demography statement, Data Availability / replication statement (ESR, Social Forces, SMR, PRPR, AJS data-openness statement), running head (JHSB)
 4. Keywords (count and rules per journal)
 5. Section order and completeness check
 
@@ -68,7 +68,7 @@ Tools (write each from the end of this file to the scratchpad before running; th
   python soc_count.py manuscript.docx --count text,notes,refs --text-limit 15000 --abstract-limit 200 --kw-min 4 --kw-max 5 --note-max 100 --authors "Surname1;Surname2"
   ```
   Parts: `text`, `abstract`, `notes` (a NOTES section plus Word footnotes/endnotes), `refs`, `appendix`, `tables`. The journal table gives each journal's `--count`. It reads tracked changes as accepted and treats long paragraphs before the first section as the introduction when there is no Introduction heading (JHSB and many sociology papers have none).
-- **Table checker** `table_check.py --style asa` for ASA journals and most sociology journals; `--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
+- **Table checker** `table_check.py --style asa` for ASA journals and most sociology journals; `--style apa` for Demography, PRPR, SSM-PH, ALCR, RSSM, SSR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
 - **Layout checker** `layout_check.py --journal <code>` (codes in the journal table; add `--blinded` for the anonymized file).
 - **Table formatter** `table_format.py --style asa|apa -o <name>_tables.docx [--decimal-align]`, only when the author asks (feature 6c).
 
@@ -90,8 +90,8 @@ Tools (write each from the end of this file to the scratchpad before running; th
 | Population and Development Review | pdr | https://onlinelibrary.wiley.com/page/journal/17284457/homepage/forauthors.html | verified |
 | Population Research and Policy Review | prpr | https://sda-demography.org/PRPR-journal/Preparing-Manuscripts and /Article-Types | verified |
 | Advances in Life Course Research | alcr | https://www.sciencedirect.com/journal/advances-in-life-course-research/publish/guide-for-authors | verified |
-| Social Science Research | ssr | Elsevier "Guide for authors" | confirm |
-| Research in Social Stratification and Mobility | rssm | Elsevier "Guide for authors" | confirm |
+| Social Science Research | ssr | https://www.sciencedirect.com/journal/social-science-research/publish/guide-for-authors | verified |
+| Research in Social Stratification and Mobility | rssm | https://www.sciencedirect.com/journal/research-in-social-stratification-and-mobility/publish/guide-for-authors | verified |
 | Sociological Methodology | smx | https://www.sagepub.com/docs/default-source/msg/SMX | verified |
 | Sociological Methods & Research | smr | https://www.sagepub.com/docs/default-source/msg/SMR | verified |
 | Sociology of Race and Ethnicity | sre | https://journals.sagepub.com/author-instructions/sre (plus the SRE Manuscript Preparation Guidelines PDF linked there) | verified |
@@ -116,7 +116,8 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 | PDR [verified] | Research articles typically 8,000-10,000 words; Notes and Commentary and Data and Perspectives take shorter papers; long book reviews 1,500-2,000 (invited) | text,notes,refs | required (length not stated) | not stated | any consistent style at first submission (free format) | double-anonymized |
 | PRPR [verified] | Research articles 8,000-10,000 words of main text (excludes title, abstract, keywords, references, tables, figures, supplements); Brief Reports ≤3,500 and ≤5 tables/figures; Research Reviews ≤6,000 with exactly 3 tables/figures; Comments ≤3,000 (invited) | text | 150-250 words, one paragraph | 4-6 | APA 7 with PRPR rules | blinded title page in file |
 | Advances in Life Course Research [verified] | no length limit stated | text | ≤250 words | 1-7 | APA 7 | double-anonymized; Highlights encouraged |
-| SSR, RSSM [confirm] | confirm on each Elsevier guide | confirm | confirm | confirm | Elsevier (confirm which) | confirm |
+| Social Science Research [verified] | no word limit (editors may ask for cuts); quantitative research articles only | text | ≤250 words | 1-7 | **numbered** [1], in order of appearance | double-anonymized; Highlights encouraged |
+| RSSM [verified] | no word limit stated | text | ≤250 words | 1-6 | APA 7 | double-anonymized; Highlights required |
 | Sociological Methodology [verified] | generally ≤10,000 words | text,notes,refs (confirm) | 150-200 words | 4-5 | ASA 7 | anonymous; $25 fee (ASA student members exempt) |
 | SMR [verified] | no fixed limit; typical ~10,000 words; ≤6 main-text tables/figures; title ≤20 words | text | ≤150 words, no parenthetical citations | not stated | ASA (datasets in DataCite style with DOI, repository, version) | double-anonymized |
 | Sociology of Race and Ethnicity [verified] | ≤10,000 words including abstract, text, notes, references, tables, figures, and appendices (Pedagogy section ≤3,000); over-length papers are rejected | abstract,text,notes,refs,tables,appendix | <250 words: problem, theoretical and methodological approach, key findings | required (number not stated) | ASA | anonymous |
@@ -163,7 +164,9 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 
 **Advances in Life Course Research [verified].** Interdisciplinary life course research: empirical, theoretical, methodological, and review articles on events, transitions, or whole life segments. No word limit or article-type list in the guide. **Double-anonymized** with a separate title page; abstract ≤250 words; 1-7 keywords; Highlights encouraged (3-5, ≤85 characters); **APA 7 references**; tables editable, no vertical rules or shading, notes below; Option B data (sharing encouraged); Elsevier generative AI declaration before the references; CRediT and competing-interest declarations.
 
-**Social Science Research, Research in Social Stratification and Mobility [confirm].** Elsevier journals; guides not yet read. They likely follow the same Elsevier conventions as ALCR (abstract ≤250, 1-7 keywords, Highlights, generative AI declaration, CRediT), but confirm limits and reference style on each journal's guide.
+**Social Science Research [verified].** Quantitative research articles that test and advance social science theory, plus papers that significantly advance quantitative methods. **Desk-rejected as out of scope:** theoretical papers, syntheses, or commentaries; qualitative studies; studies relying mainly on simulated data; reviews (except meta-analyses); descriptive or exploratory studies; research notes; evaluations of specific policies or programs; and, usually, nonexperimental studies of convenience samples (some discretion for hard-to-reach populations). Check fit before anything else. **No word limit**, but write concisely; editors may ask for cuts. Double-anonymized with a separate title page; abstract ≤250 words; 1-7 keywords; Highlights encouraged (3-5, ≤85 characters). **References are numbered**: square brackets in the text ("as demonstrated [3,6]. Barnaby and Jones [8] found..."), numbered in order of appearance, journal names abbreviated per LTWA, which is unusual for sociology, so convert author-date drafts. Tables: editable, no vertical rules or shading, notes below. Option B data (sharing encouraged); Elsevier generative AI declaration before the references; CRediT and competing-interest declarations.
+
+**Research in Social Stratification and Mobility [verified].** Official journal of ISA RC28. No word limit stated. Double-anonymized with a separate title page; abstract ≤250 words; **1-6 keywords**; **Highlights required** (3-5, ≤85 characters); **APA 7 references**; footnotes allowed but sparing, numbered consecutively; tables editable, no vertical rules or shading; Option B data; Elsevier generative AI declaration, CRediT, and competing-interest declarations.
 
 **Sociological Methodology [verified].** Generally ≤10,000 words. Abstract 150-200 words without identifying information; 4-5 keywords on the title page. Blinded manuscript; third-person self-citation. Double spaced throughout, Times New Roman 12, **1.25-inch margins**, Word or LaTeX (with PDF), generally 3 heading levels, editable equations. ASA 7; REFERENCES alphabetical, all authors listed, DOIs for datasets. Tables in Word or Excel with significance asterisks (one- or two-tailed stated); figures in grayscale. Notes in a separate ENDNOTES section, each ≤100 words. Lettered appendices. $25 fee.
 
@@ -189,7 +192,8 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 - Social Forces: Chicago 17 author-date. (Author Year) with no comma; page numbers only for quotations or specific notes or tables; et al. for more than three authors; 1975a, 1975b; reference list alphabetical with first names spelled out.
 - AJS house style: author-date; headline-style capitalization; article and chapter titles in quotation marks; comma before "and" for three authors in the list; web pages cited in notes with access dates; inclusive page numbers for chapters.
 
-### APA-based (Demography, PRPR, SSM - Population Health, ALCR; SSM tables)
+### APA-based (Demography, PRPR, SSM - Population Health, ALCR, RSSM; SSM tables)
+- Social Science Research is the exception among the Elsevier sociology journals: numbered references in square brackets, in order of appearance.
 - Demography: (Author Year) without comma; et al. for three or more; numbers rule as in the Demography note; no endnotes.
 - PRPR: APA 7 with the PRPR rules above (DOIs as hyperlinks; single-spaced reference list).
 - APA statistics conventions apply in tables: italic statistical symbols, no leading zero for values that can't exceed 1, exact p values (p < .001 floor).
@@ -225,9 +229,9 @@ Principles that apply to all of them:
 
 **2. Abstract.** Follow the journal's limit and any content rule (JHSB: sample size, design, data source; Demography: results and why they matter, methods only if they're the contribution; SMR: no parenthetical citations; ASR and Socius: purpose, methods, findings). No references unless allowed. Count words.
 
-**3. Journal-specific extras.** Highlights (Demography, and SSM and SSM-MH where required; encouraged at SSM-PH and ALCR: 3-5 bullets, ≤85 characters each, including spaces; count characters; SSM wants them in a separate file named with "highlights"). SSM editorial office (recommend one of the seven from the paper's methods and theory). Relevance to Demography statement (editors only: why the paper matters to population studies). Data availability or replication statement (ESR, Social Forces, SMR, PRPR, Demography at acceptance; AJS data-openness and code statements at first submission). JHSB running head (<55 characters including spaces). Draft from the manuscript only.
+**3. Journal-specific extras.** Highlights (Demography, and SSM, SSM-MH, and RSSM where required; encouraged at SSM-PH, ALCR, and SSR: 3-5 bullets, ≤85 characters each, including spaces; count characters; SSM wants them in a separate file named with "highlights"). SSM editorial office (recommend one of the seven from the paper's methods and theory). Relevance to Demography statement (editors only: why the paper matters to population studies). Data availability or replication statement (ESR, Social Forces, SMR, PRPR, Demography at acceptance; AJS data-openness and code statements at first submission). JHSB running head (<55 characters including spaces). Draft from the manuscript only.
 
-**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6; SSM journals and ALCR 1-7, avoiding multiword phrases with "and" or "of"). Avoid repeating title words where the journal says so (PRPR).
+**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6; SSM journals, ALCR, and SSR 1-7, RSSM 1-6, avoiding multiword phrases with "and" or "of"). Avoid repeating title words where the journal says so (PRPR).
 
 **5. Section order.** Check the journal's order and heading conventions (JHSB: no Introduction heading; PRPR required Level 1 headings; Demography starts with "Introduction"; ESR ≤2 subheading levels; ASR, JHSB, Soc Methodology ~3 levels; AJS order abstract, text, references, notes, tables, figures; BJS order text, appendices, notes, bibliography). Methods should cover data source and sample derivation, measures, missing data, and analytic strategy.
 
@@ -235,7 +239,7 @@ Principles that apply to all of them:
 
 **6b. Page layout and heading check.** Run `layout_check.py --journal <code>` (`--blinded` for the anonymized file). Report must-fix items marked "journal requirement" (e.g., ASR: remove page numbers; JHSB: no Word notes, no Introduction heading, text starts on a new page; PRPR: ALL CAPS Level 1, no line numbers, page numbers from the title page; Demography: left aligned, page numbers; Socius and ESR: page numbers; SSM: page and line numbers, no notes) and suggestions. Tell the author to resolve tracked changes and comments, and to clear file properties in the blinded file (Socius and ESR require it). Don't edit layout unless asked; if asked, edit a copy with the docx skill.
 
-**6c. Format my tables.** Only when asked. (1) Run the table checker and show the findings. (2) Suggest resolving tracked changes inside tables first. (3) Run `python table_format.py manuscript.docx --style asa -o <name>_tables.docx` (`--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals), adding `--decimal-align` for JHSB, SRE, and PRPR (or if the author wants it), and `--include-supplement` for appendix tables if wanted. (4) It sets horizontal rules only, removes shading and colored text, repeats the header row, and makes tracked fixes to P values (leading zeros, .000), minus signs, and comma separators; it never changes values, decimals, wording, or order. (5) Re-run the checker on the output and list what remains by hand (titles, note wording such as "Note:" vs *Note.*, one- or two-tailed statement, Roman numerals at BJS, asterisks at Demography). (6) Deliver the .docx and the change log.
+**6c. Format my tables.** Only when asked. (1) Run the table checker and show the findings. (2) Suggest resolving tracked changes inside tables first. (3) Run `python table_format.py manuscript.docx --style asa -o <name>_tables.docx` (`--style apa` for Demography, PRPR, SSM-PH, ALCR, RSSM, SSR, and the SSM journals), adding `--decimal-align` for JHSB, SRE, and PRPR (or if the author wants it), and `--include-supplement` for appendix tables if wanted. (4) It sets horizontal rules only, removes shading and colored text, repeats the header row, and makes tracked fixes to P values (leading zeros, .000), minus signs, and comma separators; it never changes values, decimals, wording, or order. (5) Re-run the checker on the output and list what remains by hand (titles, note wording such as "Note:" vs *Note.*, one- or two-tailed statement, Roman numerals at BJS, asterisks at Demography). (6) Deliver the .docx and the change log.
 
 **7. Consistency check.** Fact table (Ns through the sample derivation, descriptives, key coefficients and SEs or CIs, years) checked across abstract, highlights, text, tables, and figures. Recompute percentages from counts.
 
@@ -627,7 +631,7 @@ if __name__ == "__main__":
 
 ## Table checker
 
-Write this to the scratchpad as `table_check.py` before running it. Use `--style asa` for ASA journals and most sociology journals, `--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
+Write this to the scratchpad as `table_check.py` before running it. Use `--style asa` for ASA journals and most sociology journals, `--style apa` for Demography, PRPR, SSM-PH, ALCR, RSSM, SSR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
 
 ```python
 #!/usr/bin/env python3

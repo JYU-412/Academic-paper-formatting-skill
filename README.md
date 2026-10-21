@@ -15,8 +15,8 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 
 **v1.4 (October 2026)**
 
-- **More journals checked against their own author guides:** *Social Science & Medicine*, *SSM - Population Health*, *SSM - Mental Health*, *Sociology of Health & Illness*, *Population and Development Review*, *Advances in Life Course Research*, and *Sociology of Race and Ethnicity* now have verified article types, word limits, abstract and keyword rules, reference styles, and table rules.
-- **Corrections from the official guides:** for example, SSM - Population Health and ALCR use APA 7 references, SSM - Mental Health uses single-anonymized review, Sociology of Health & Illness counts each half-page table as 250 words, and SRE requires decimal-aligned tables and no Word footnotes.
+- **Every journal now checked against its own author guide:** *Social Science & Medicine*, *SSM - Population Health*, *SSM - Mental Health*, *Sociology of Health & Illness*, *Population and Development Review*, *Advances in Life Course Research*, *Social Science Research*, *Research in Social Stratification and Mobility*, and *Sociology of Race and Ethnicity* now have verified article types, word limits, abstract and keyword rules, reference styles, and table rules.
+- **Corrections from the official guides:** for example, SSM - Population Health and ALCR use APA 7 references, SSM - Mental Health uses single-anonymized review, Sociology of Health & Illness counts each half-page table as 250 words, SRE requires decimal-aligned tables and no Word footnotes, and Social Science Research uses numbered references and desk-rejects qualitative and descriptive studies.
 - **Layout checker:** margin ranges (SRE: 1 to 1.5 inches) and correct target values in margin messages.
 
 **v1.3 (October 2026)**
@@ -24,7 +24,6 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 - **New sociology and demography skill:** 18 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, ESR, BJS, Socius, and the SSM journals, with ASA, Chicago, APA, and Harvard style rules.
 - **Journal-specific word counts:** choose what counts toward the limit (text, notes, references, abstract, appendix, tables), since sociology journals differ.
 - **Decimal alignment:** the table formatter can line numbers up on the decimal point (required at JHSB).
-- **Verification labels:** each sociology journal is marked verified or "confirm" depending on whether its official author page could be read.
 
 **v1.2 (October 2026)**
 
@@ -181,7 +180,7 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 - **Decimal alignment isn't required.** JAMA Network aligns table columns in production and asks authors not to line up numbers with tabs or spaces; APA and the GSA journals center cell entries and don't require decimal alignment. What reviewers and editors do notice is inconsistent decimal places, which the table checker flags.
 - **Your science stays your call.** When a check finds a substantive issue (an outcome missing from the abstract, a mismatch between Methods and Results), the skill raises it as a question instead of changing your conclusions.
 - **Unpublished data.** Your manuscript is processed by Claude. Check your institution's and funder's policies on sharing unpublished work with AI tools, and your data use agreements (for example, for restricted survey data).
-- **Some sociology journals are marked "confirm."** The official author pages for *Social Science Research* and *Research in Social Stratification and Mobility* (Elsevier) haven't been checked yet. The skill says which details to check, and asks you to open or paste the page if it can't fetch it. Corrections are welcome as issues.
+- **Journal rules were checked in October 2026.** Each run still fetches the live author page when it can, and the live page wins. Corrections are welcome as issues.
 - **Not affiliated** with the American Medical Association, JAMA Network, the Gerontological Society of America, the American Sociological Association, the Population Association of America, Oxford University Press, or any journal publisher. Journal names are used only to describe compatibility.
 
 ## What's in this repository
