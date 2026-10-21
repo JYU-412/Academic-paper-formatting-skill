@@ -1,10 +1,14 @@
 # Changelog
 
+## 1.3.1 (2026-10-21)
+
+- Removed Annual Review of Sociology (invitation only).
+
 ## 1.3.0 (2026-10-21)
 
-- New `sociology-manuscript-prep` skill for 19 sociology and demography journals (ASR, AJS, Social Forces, Annual Review of Sociology, Socius, ESR, BJS, JHSB, Social Science & Medicine and SSM journals, Sociology of Health & Illness, Demography, PDR, PRPR, ALCR, Social Science Research, RSSM, Sociological Methodology, SMR, Sociology of Race and Ethnicity). Each journal is marked verified or confirm.
+- New `sociology-manuscript-prep` skill for 18 sociology and demography journals (ASR, AJS, Social Forces, Socius, ESR, BJS, JHSB, Social Science & Medicine and SSM journals, Sociology of Health & Illness, Demography, PDR, PRPR, ALCR, Social Science Research, RSSM, Sociological Methodology, SMR, Sociology of Race and Ethnicity). Each journal is marked verified or confirm.
 - New `soc_count.py`: choose what counts toward the limit (`--count text,notes,refs,...`), counts Word footnotes/endnotes, flags notes over a word limit, keywords out of range, and long titles.
-- Layout checker: 19 sociology journals added (e.g., ASR page numbers removed, JHSB no Word notes and no Introduction heading, PRPR ALL CAPS Level 1 headings and no line numbers, SSM line numbers).
+- Layout checker: 18 sociology journals added (e.g., ASR page numbers removed, JHSB no Word notes and no Introduction heading, PRPR ALL CAPS Level 1 headings and no line numbers, SSM line numbers).
 - Table checker and formatter: new `--style asa`; new `--decimal-align` (formatter sets decimal tabs; checker flags unaligned numeric cells).
 - Fixed: the table checker embedded in v1.2 had lost the `--allow-asterisks` option used for JGA.
 

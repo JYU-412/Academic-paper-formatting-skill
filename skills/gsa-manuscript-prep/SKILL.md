@@ -975,7 +975,7 @@ Usage:
     python layout_check.py manuscript.docx --journal tg     # The Gerontologist
     python layout_check.py manuscript.docx --journal ia     # Innovation in Aging
     python layout_check.py manuscript.docx --journal ppar   # Public Policy & Aging Report
-    Sociology and demography: asr, ajs, sf, ars, socius, esr, bjs, jhsb, ssm, shi, demography,
+    Sociology and demography: asr, ajs, sf, socius, esr, bjs, jhsb, ssm, shi, demography,
     pdr, prpr, alcr, ssr, rssm, smx (Sociological Methodology), smr, sre
     add --blinded when checking the anonymized file
 
@@ -1048,7 +1048,6 @@ RULES.update({
     "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
                 newpage=["references", "tables"]),
     "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
-    "ars": _soc("Annual Review of Sociology", size_src="req", double="req"),
     "esr": _soc("European Sociological Review", double="req", pagenum="req"),
     "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
     "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",

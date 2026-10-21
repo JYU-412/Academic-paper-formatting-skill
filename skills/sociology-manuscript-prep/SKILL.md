@@ -1,6 +1,6 @@
 ---
 name: sociology-manuscript-prep
-description: Prepare, polish, check, and revise manuscripts for major sociology and demography journals (American Sociological Review, American Journal of Sociology, Social Forces, Annual Review of Sociology, Socius, European Sociological Review, British Journal of Sociology, Journal of Health and Social Behavior, Social Science & Medicine and the SSM journals, Sociology of Health & Illness, Demography, Population and Development Review, Population Research and Policy Review, Advances in Life Course Research, Social Science Research, Research in Social Stratification and Mobility, Sociological Methodology, Sociological Methods & Research, Sociology of Race and Ethnicity). Use for abstracts, highlights, keywords, word limits and trims, ASA/Chicago/APA/Harvard style, table and layout checks, table formatting, anonymization, data statements, cover letters, mock reviews, and reviewer responses, even if the user just says "get this ready for ASR" or "submit to Demography".
+description: Prepare, polish, check, and revise manuscripts for major sociology and demography journals (American Sociological Review, American Journal of Sociology, Social Forces, Socius, European Sociological Review, British Journal of Sociology, Journal of Health and Social Behavior, Social Science & Medicine and the SSM journals, Sociology of Health & Illness, Demography, Population and Development Review, Population Research and Policy Review, Advances in Life Course Research, Social Science Research, Research in Social Stratification and Mobility, Sociological Methodology, Sociological Methods & Research, Sociology of Race and Ethnicity). Use for abstracts, highlights, keywords, word limits and trims, ASA/Chicago/APA/Harvard style, table and layout checks, table formatting, anonymization, data statements, cover letters, mock reviews, and reviewer responses, even if the user just says "get this ready for ASR" or "submit to Demography".
 ---
 
 # Sociology Journals Manuscript Prep
@@ -13,7 +13,7 @@ Every run needs the manuscript (.docx, .pdf, or pasted text). Read it in full fi
 
 Confirm, inferring what you can and asking only about what is missing:
 1. **Journal** (see the journal reference below). For the SSM family, which journal: *Social Science & Medicine*, *SSM - Population Health*, *SSM - Mental Health*, *SSM - Qualitative Research in Health*, or *SSM - Health Systems*.
-2. **Article type**, e.g., article, research note, brief report, comment, data visualization (Socius), review.
+2. **Article type**, e.g., article, research note, brief report, comment, data visualization (Socius), review. (Annual Review of Sociology is invitation-only and not covered.)
 3. **Design**: quantitative, qualitative, mixed methods, computational, review. It changes the reporting expectations and data-sharing rules (several journals exempt interview and ethnographic data).
 4. **Stage**: first submission (several journals accept "format-free" first submissions: Social Forces, ESR) or final/accepted version (journal style required).
 
@@ -80,7 +80,6 @@ Tools (write each from the end of this file to the scratchpad before running; th
 | American Sociological Review | asr | https://journals.sagepub.com/author-instructions/ASR | verified |
 | American Journal of Sociology | ajs | https://www.journals.uchicago.edu/journals/ajs/instruct and https://ajs.uchicago.edu/for-authors/further-guides-for-submission/ | verified |
 | Social Forces | sf | https://academic.oup.com/sf/pages/author-guidelines | verified |
-| Annual Review of Sociology | ars | invitation only; Annual Reviews author handbook (sent with the invitation) | confirm |
 | Socius | socius | https://journals.sagepub.com/author-instructions/SRD | verified |
 | European Sociological Review | esr | https://academic.oup.com/esr/pages/General_Instructions | verified |
 | British Journal of Sociology | bjs | https://lse.ac.uk/sociology/british-journal-of-sociology/notes-to-contributors (Wiley page also) | verified (LSE page) |
@@ -105,7 +104,6 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 | ASR [verified] | 15,000 words: text, notes, references (not tables/figures) | text,notes,refs | 150-200 words | 4-5, on title page | ASA 7 | anonymous; $25 fee (ASA student members exempt) |
 | AJS [verified] | No limit; referees may need more time over 18,000; give the word count (text, notes, references) in the cover letter | text,notes,refs | ~150 words | not stated | AJS author-date (Chicago-based) | double-blind; $30 fee (sole-author grad students exempt) |
 | Social Forces [verified] | 10,000 words: text, endnotes, references; ≤10 tables and figure panels | text,notes,refs | no limit stated; no references | not stated | Chicago 17 author-date (any readable style at first submission) | double-anonymized; $50 fee ($20 student-only) |
-| Annual Review of Sociology [confirm] | set in the invitation (Article Length Estimator) | per invitation | ≤150 words | ≤6 | Annual Reviews name-year (Harvard) | invited |
 | Socius [verified] | 10,000 words of main text at first submission; title ≤20 words; data visualizations: 1 figure + ~500 words | text | ≤200 words | yes (number not stated) | ASA 7 | double-blind; $25 fee; APC on acceptance ($1,000 ASA member / $2,000 non-member; student rates) |
 | ESR [verified] | ~8,000 words including endnotes and references, excluding tables and figures | text,notes,refs | ≤200 words | required | author-year, year in parentheses: (Gans, 1962) | double-blind |
 | BJS [verified, LSE page] | ~8,000 words including abstract, notes, bibliography, appendices; research notes ≤2,500; review essays 5,000-5,500 | abstract,text,notes,refs,appendix | ≤300 words | 6 | Harvard: Smith, A.J. 1992 *Title*, London: Routledge. | double-blind |
@@ -128,8 +126,6 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 **American Journal of Sociology [verified].** No word limit (be concise); give the word count (text, notes, references) in the cover letter. Abstract ~150 words, required (papers without one aren't reviewed), pasted in the portal and in the manuscript. Cover page with the acknowledgment note as a separate file; remove personal notes about data collection, grants, and awards; list informal commenters in the acknowledgment note; revision memos must also be anonymous. Don't over-strip self-citations: cite your own work where any author would, and put unpublished supporting material in a reviewer appendix. Serif font ≥11 pt (12 preferred), double spaced, ≥1-inch margins. Order: abstract, text, references, notes (if endnotes), tables, figures. **Tables and figures at the back**, not in the text. Footnotes or endnotes are both fine; the acknowledgment note is marked with an asterisk on the cover sheet and substantive notes start at 1. Author-date citations; reference list alphabetical with full author names, headline-style capitalization, article and chapter titles in quotation marks; three authors get a comma before "and"; more than three use et al. in text; web pages go in notes, with access dates. Tables numbered separately (no 2a/2b), appendix tables A1, A2; avoid bold or italics to mark cells and avoid the word "panel". Alt text required for figures. Required at first submission: a **data-openness statement** (whether data will be deposited in the AJS Dataverse; interview and ethnographic data usually exempt), whether code will be shared, and a **novelty statement** if the paper overlaps with your other work. Don't suggest reviewers (suggestions are ignored). Preregistration optional. No gold open access; green OA is supported.
 
 **Social Forces [verified].** 10,000 words including text, endnotes, and references; ≤10 tables and figure panels. Format-free first submission (any readable reference style), tables and figures in line with the text preferred at first submission; journal style (Chicago 17 author-date) at final submission, with tables at the end on separate pages and **no vertical lines**. Title page holds title, authors, affiliations, contact details, acknowledgments, and the abstract (no references in it). Accept all tracked changes before uploading. Remove reference-manager field codes. Don't use abbreviations in headings, tables, or figures. Notes only for substantive comments. Alt text for every figure, under the legend, beginning "Alt text:". Supplements ≤10 pages, 2 MB per file, mostly tables and figures, not copyedited. **Data availability statement required**; data and code sharing strongly encouraged; cite data and software in the references. Funding with full agency names and grant numbers in acknowledgments; conflicts disclosed at submission; ethics approval or exemption stated in Methods. **AI use must be disclosed in the cover letter and in the Methods or Acknowledgements.** The cover letter must disclose related preprints, dissertations, or papers and how this one differs.
-
-**Annual Review of Sociology [confirm].** Invitation only; length and reference limits set by the editors. Handbook (older edition) specifies: abstract ≤150 words; up to 6 keywords; title page with a running title ≤40 characters; double spaced, 12 pt; footnotes discouraged; name-year citations with "&" for two authors and et al. for three or more; Literature Cited with surnames and initials without periods (Zeiger E, Hepler PK. 1991.), journal titles abbreviated; up to 6 authors, then 5 + et al.; optional Summary Points and Future Issues (≤8 each), sidebars (50-200 words), terms and definitions (≤20); a disclosure statement. Confirm everything against the handbook sent with the invitation.
 
 **Socius [verified].** Original research and data visualizations. ≤10,000 words of main text at first submission (contact the office before exceeding), title ≤20 words, abstract ≤200 words. Separate title page file (with 150-word author bios); anonymize the manuscript, cite unpublished unsearchable own work as "Author", and **remove your name from the file properties**. Letter size, double spaced, page numbers starting after the title page. ASA 7. Avoid italics for emphasis. Results must be in the paper or supplement, never "available upon request". Cite datasets with a persistent identifier. Funding under a separate heading ("This research received no specific grant..." if none). Fees: $25 submission; APCs on acceptance by ASA membership status.
 
@@ -190,10 +186,9 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 - PRPR: APA 7 with the PRPR rules above (DOIs as hyperlinks; single-spaced reference list).
 - APA statistics conventions apply in tables: italic statistical symbols, no leading zero for values that can't exceed 1, exact p values (p < .001 floor).
 
-### Harvard (BJS, ESR variant, Annual Reviews, SSM per secondary guide)
+### Harvard (BJS, ESR variant, SSM per secondary guide)
 - BJS: Riley (1983) in text; et al. for four or more authors; bibliography entry "Smith, A.J. 1992 *Sociology Today*, London: Routledge." Repeat author names; no ibid.
 - ESR: (Gans, 1962), with a comma and the year in parentheses in the list.
-- Annual Reviews: (Smith et al. 1999); "&" for two authors; Literature Cited with initials without periods.
 
 ### Causal language (all journals)
 For observational designs, flag causal verbs and nouns ("led to", "caused", "resulted in", "reduced", "increased", "effect of", "impact") and suggest "was associated with" or "the association between". If the design supports causal inference (experiments, natural experiments, fixed effects with stated assumptions, IV, RD, difference-in-differences, target trial emulation), check that the identification assumptions are stated instead. Look hardest at the abstract, highlights, and discussion.
@@ -222,7 +217,7 @@ Principles that apply to all of them:
 
 **3. Journal-specific extras.** Highlights (Demography and SSM: 3-5 sentences, ≤85 characters each, including spaces; count characters). Relevance to Demography statement (editors only: why the paper matters to population studies). Data availability or replication statement (ESR, Social Forces, SMR, PRPR, Demography at acceptance; AJS data-openness and code statements at first submission). JHSB running head (<55 characters including spaces). Draft from the manuscript only.
 
-**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6; Annual Review ≤6). Avoid repeating title words where the journal says so (PRPR).
+**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6). Avoid repeating title words where the journal says so (PRPR).
 
 **5. Section order.** Check the journal's order and heading conventions (JHSB: no Introduction heading; PRPR required Level 1 headings; Demography starts with "Introduction"; ESR ≤2 subheading levels; ASR, JHSB, Soc Methodology ~3 levels; AJS order abstract, text, references, notes, tables, figures; BJS order text, appendices, notes, bibliography). Methods should cover data source and sample derivation, measures, missing data, and analytic strategy.
 
@@ -1004,7 +999,7 @@ Usage:
     python layout_check.py manuscript.docx --journal tg     # The Gerontologist
     python layout_check.py manuscript.docx --journal ia     # Innovation in Aging
     python layout_check.py manuscript.docx --journal ppar   # Public Policy & Aging Report
-    Sociology and demography: asr, ajs, sf, ars, socius, esr, bjs, jhsb, ssm, shi, demography,
+    Sociology and demography: asr, ajs, sf, socius, esr, bjs, jhsb, ssm, shi, demography,
     pdr, prpr, alcr, ssr, rssm, smx (Sociological Methodology), smr, sre
     add --blinded when checking the anonymized file
 
@@ -1077,7 +1072,6 @@ RULES.update({
     "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
                 newpage=["references", "tables"]),
     "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
-    "ars": _soc("Annual Review of Sociology", size_src="req", double="req"),
     "esr": _soc("European Sociological Review", double="req", pagenum="req"),
     "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
     "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",

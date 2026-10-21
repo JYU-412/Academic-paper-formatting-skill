@@ -6,7 +6,7 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 |---|---|
 | **`jama-manuscript-prep`** | JAMA Network journals: *JAMA*, *JAMA Network Open*, *JAMA Internal Medicine*, *JAMA Neurology*, *JAMA Psychiatry*, *JAMA Health Forum*, and the other JAMA specialty journals |
 | **`gsa-manuscript-prep`** | Gerontological Society of America journals: *Journals of Gerontology Series A* (Biological or Medical Sciences), *Series B* (Psychological or Social Sciences), *The Gerontologist*, *Innovation in Aging*, *Public Policy & Aging Report* |
-| **`sociology-manuscript-prep`** | Sociology and demography journals: *American Sociological Review*, *American Journal of Sociology*, *Social Forces*, *Annual Review of Sociology*, *Socius*, *European Sociological Review*, *British Journal of Sociology*, *Journal of Health and Social Behavior*, *Social Science & Medicine* and the SSM journals, *Sociology of Health & Illness*, *Demography*, *Population and Development Review*, *Population Research and Policy Review*, *Advances in Life Course Research*, *Social Science Research*, *Research in Social Stratification and Mobility*, *Sociological Methodology*, *Sociological Methods & Research*, *Sociology of Race and Ethnicity* |
+| **`sociology-manuscript-prep`** | Sociology and demography journals: *American Sociological Review*, *American Journal of Sociology*, *Social Forces*, *Socius*, *European Sociological Review*, *British Journal of Sociology*, *Journal of Health and Social Behavior*, *Social Science & Medicine* and the SSM journals, *Sociology of Health & Illness*, *Demography*, *Population and Development Review*, *Population Research and Policy Review*, *Advances in Life Course Research*, *Social Science Research*, *Research in Social Stratification and Mobility*, *Sociological Methodology*, *Sociological Methods & Research*, *Sociology of Race and Ethnicity* |
 
 **Download:** [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) · [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip) · [sociology-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/sociology-manuscript-prep.zip)
 
@@ -15,7 +15,7 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 
 **v1.3 (October 2026)**
 
-- **New sociology and demography skill:** 19 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, ESR, BJS, Socius, and the SSM journals, with ASA, Chicago, APA, and Harvard style rules.
+- **New sociology and demography skill:** 18 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, ESR, BJS, Socius, and the SSM journals, with ASA, Chicago, APA, and Harvard style rules.
 - **Journal-specific word counts:** choose what counts toward the limit (text, notes, references, abstract, appendix, tables), since sociology journals differ.
 - **Decimal alignment:** the table formatter can line numbers up on the decimal point (required at JHSB).
 - **Verification labels:** each sociology journal is marked verified or "confirm" depending on whether its official author page could be read.
