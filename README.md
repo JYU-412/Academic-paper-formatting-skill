@@ -7,7 +7,7 @@ Two free [Claude skills](https://support.claude.com/en/articles/12512180-use-ski
 | **`jama-manuscript-prep`** | JAMA Network journals: *JAMA*, *JAMA Network Open*, *JAMA Internal Medicine*, *JAMA Neurology*, *JAMA Psychiatry*, *JAMA Health Forum*, and the other JAMA specialty journals |
 | **`gsa-manuscript-prep`** | Gerontological Society of America journals: *Journals of Gerontology Series A* (Biological or Medical Sciences), *Series B* (Psychological or Social Sciences), *The Gerontologist*, *Innovation in Aging*, *Public Policy & Aging Report* |
 
-**[Download the latest release →](../../releases/latest)**
+**Download:** [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) · [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip)
 
 ---
 
@@ -37,7 +37,7 @@ Each skill covers the whole path from draft to accepted paper:
 
 Available on Free, Pro, Max, Team, and Enterprise plans.
 
-1. Download `jama-manuscript-prep.zip` and/or `gsa-manuscript-prep.zip` from the [latest release](../../releases/latest) (or from the [`dist/`](dist) folder). Don't unzip them.
+1. Download [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) and/or [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip) (also in the [`dist/`](dist) folder). Don't unzip them.
 2. In Claude, open **Settings → Capabilities** and turn on **Code execution and file creation**. The skills need it to read Word files and run the word counter.
 3. Go to **Customize → Skills**.
 4. Click **+**, then **+ Create skill**, then **Upload a skill**, and choose the ZIP file.
