@@ -13,23 +13,12 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 
 ## What's new
 
-**v1.4 (October 2026)**
+**October 21, 2026**
 
-- **Every journal now checked against its own author guide:** *Social Science & Medicine*, *SSM - Population Health*, *SSM - Mental Health*, *Sociology of Health & Illness*, *Population and Development Review*, *Advances in Life Course Research*, *Social Science Research*, *Research in Social Stratification and Mobility*, and *Sociology of Race and Ethnicity* now have verified article types, word limits, abstract and keyword rules, reference styles, and table rules.
-- **Corrections from the official guides:** for example, SSM - Population Health and ALCR use APA 7 references, SSM - Mental Health uses single-anonymized review, Sociology of Health & Illness counts each half-page table as 250 words, SRE requires decimal-aligned tables and no Word footnotes, and Social Science Research uses numbered references and desk-rejects qualitative and descriptive studies.
-- **Layout checker:** margin ranges (SRE: 1 to 1.5 inches) and correct target values in margin messages.
-
-**v1.3 (October 2026)**
-
-- **New sociology and demography skill:** 18 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, ESR, BJS, Socius, and the SSM journals, with ASA, Chicago, APA, and Harvard style rules.
-- **Journal-specific word counts:** choose what counts toward the limit (text, notes, references, abstract, appendix, tables), since sociology journals differ.
-- **Decimal alignment:** the table formatter can line numbers up on the decimal point (required at JHSB).
-
-**v1.2 (October 2026)**
-
-- **Page layout and heading checker:** flags font, spacing, margins, page numbers, missing page breaks, footnotes, heading levels, and leftover tracked changes or comments.
-- **Table formatter (on request):** say *"format my tables"* to get a new copy of your manuscript with journal-style tables; fixes appear as tracked changes, and your numbers and original file are never changed.
-- **Table checker:** flags vertical lines, shading, mixed decimal places, P values like 0.001 or .000, minus signs, and footnote markers.
+- **New sociology and demography skill** for 20 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, the SSM journals, and Sociology of Race and Ethnicity. Every journal's rules were checked against its own author guide.
+- **Formatting checks:** a page layout and heading checker (font, spacing, margins, page numbers, page breaks, notes, heading levels) and a table checker (vertical lines, shading, decimal places, P values, minus signs).
+- **Table formatter, on request:** say *"format my tables"* to get a copy of your manuscript with journal-style tables, including decimal alignment, with fixes as tracked changes. Your numbers and original file are never changed.
+- **Journal-specific word counts:** choose what counts toward the limit (text, notes, references, abstract, tables), since journals differ.
 
 ---
 
