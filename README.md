@@ -9,6 +9,13 @@ Two free [Claude skills](https://support.claude.com/en/articles/12512180-use-ski
 
 **Download:** [jama-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/jama-manuscript-prep.zip) · [gsa-manuscript-prep.zip](https://github.com/JYU-412/Academic-paper-formatting-skill/raw/main/dist/gsa-manuscript-prep.zip)
 
+
+## What's new (v1.2, October 2026)
+
+- **Page layout and heading checker:** flags font, spacing, margins, page numbers, missing page breaks, footnotes, heading levels, and leftover tracked changes or comments.
+- **Table formatter (on request):** say *"format my tables"* to get a new copy of your manuscript with journal-style tables; fixes appear as tracked changes, and your numbers and original file are never changed.
+- **Table checker:** flags vertical lines, shading, mixed decimal places, P values like 0.001 or .000, minus signs, and footnote markers.
+
 ---
 
 ## What this is
