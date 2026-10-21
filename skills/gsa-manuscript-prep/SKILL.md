@@ -1038,25 +1038,26 @@ RULES.update({
     "asr": _soc("American Sociological Review", font="Times New Roman", size_src="req", font_src="req", double="req",
                 margins=1440, pagenum="none", word_notes="sug", newpage=["references"]),
     "jhsb": _soc("Journal of Health and Social Behavior", font="Times New Roman", size_src="req", font_src="req",
-                 double="req", margins=1440, word_notes="req", no_intro_heading=True,
+                 double="req", margins=(1440, 14400), margin_src="req", word_notes="req", no_intro_heading=True,
                  newpage=["text", "notes", "references", "tables"], each_table_page=True),
-    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", double="sug", margins=1440, word_notes="sug"),
+    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", size_src="req", font_src="req",
+                double="req", margins=(1440, 2160), margin_src="req", word_notes="req",
+                newpage=["text", "notes", "references", "tables"], each_table_page=True),
     "smx": _soc("Sociological Methodology", font="Times New Roman", size_src="req", font_src="req", double="req",
-                margins=1800, word_notes="sug"),
-    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800),
+                margins=1800, margin_src="req", word_notes="sug"),
+    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800, margin_src="req"),
     "socius": _soc("Socius", double="req", pagenum="req"),
     "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
                 newpage=["references", "tables"]),
     "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
     "esr": _soc("European Sociological Review", double="req", pagenum="req"),
     "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
-    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",
-                       newpage=["references", "tables"], each_table_page=True),
+    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, margin_src="req",
+                       pagenum="req", newpage=["references", "tables"], each_table_page=True),
     "prpr": _soc("Population Research and Policy Review", size_src="req", double="req", ragged="req", margins=1440,
-                 pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
-    "ssm": _soc("Social Science & Medicine (and SSM journals)", ragged="req", pagenum="req", lines="req",
-                footnotes="req", apa_headings=True),
-    "shi": _soc("Sociology of Health & Illness"),
+                 margin_src="req", pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
+    "ssm": _soc("Social Science & Medicine (and SSM journals)"),
+    "shi": _soc("Sociology of Health & Illness", double="req"),
     "pdr": _soc("Population and Development Review"),
     "alcr": _soc("Advances in Life Course Research", pagenum="sug", lines="sug"),
     "ssr": _soc("Social Science Research", pagenum="sug", lines="sug"),
@@ -1255,7 +1256,9 @@ def main():
         mar = sp.find(W + "pgMar")
         if mar is not None and rules["margins"]:
             vals = {k: int(mar.get(W + k, 0)) for k in ("top", "bottom", "left", "right")}
-            if any(abs(v - rules["margins"]) > 20 for v in vals.values()):
+            m = rules["margins"]
+            lo, hi = (m if isinstance(m, tuple) else (m, m))
+            if any(v < lo - 20 or v > hi + 20 for v in vals.values()):
                 margins_bad.append(", ".join(f"{k} {v / 1440:.2f} in" for k, v in vals.items()))
         if sp.find(W + "lnNumType") is not None:
             lnnum = True
@@ -1264,7 +1267,12 @@ def main():
     if sizes:
         add("Page setup", "Paper size: " + ", ".join(f"{k} ({v} section{'s' if v > 1 else ''})" for k, v in sizes.items()) + ". US Letter or A4 are both accepted by these journals.")
     if margins_bad:
-        add("Page setup", f"Margins are not 1 inch on every side: {margins_bad[0]}.", "req" if a.journal == "jgb" else "sug")
+        m = rules["margins"]
+        lo, hi = (m if isinstance(m, tuple) else (m, m))
+        want = (f"{lo / 1440:g} inch" if lo == hi else f"at least {lo / 1440:g} inch" if hi >= 14400
+                else f"between {lo / 1440:g} and {hi / 1440:g} inches")
+        add("Page setup", f"Margins should be {want} on every side; found {margins_bad[0]}.",
+            "req" if a.journal == "jgb" or rules.get("margin_src") == "req" else "sug")
     if lnnum and rules["lines"] == "none":
         add("Page setup", f"Line numbering is on. {rules['name']} asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
     elif not lnnum and rules["lines"] in ("req", "sug"):
@@ -1397,8 +1405,6 @@ def main():
             real = [f for f in x if f.get(W + "type") not in ("separator", "continuationSeparator", "continuationNotice")]
             if real and rules.get("word_notes"):
                 add("Structure", f"{len(real)} Word {label}(s) found. {rules['name']} wants notes typed in a separate NOTES section after the text (superscript numbers in the text), not Word's built-in note function.", rules["word_notes"])
-            elif real and rules["footnotes"] == "req" and a.journal == "ssm":
-                add("Structure", f"{len(real)} {label}(s) found. Social Science & Medicine doesn't allow footnotes or endnotes; move the content into the text.", "req")
             elif real and rules["footnotes"] == "req":
                 add("Structure", f"{len(real)} {label}(s) found. GSA journals don't allow footnotes or endnotes; move them to an \"Author Notes\" section (PPAR allows up to 5 short endnotes).", "req")
             elif real:

@@ -1,6 +1,6 @@
 ---
 name: sociology-manuscript-prep
-description: Prepare, polish, check, and revise manuscripts for major sociology and demography journals (American Sociological Review, American Journal of Sociology, Social Forces, Socius, European Sociological Review, British Journal of Sociology, Journal of Health and Social Behavior, Social Science & Medicine and the SSM journals, Sociology of Health & Illness, Demography, Population and Development Review, Population Research and Policy Review, Advances in Life Course Research, Social Science Research, Research in Social Stratification and Mobility, Sociological Methodology, Sociological Methods & Research, Sociology of Race and Ethnicity). Use for abstracts, highlights, keywords, word limits and trims, ASA/Chicago/APA/Harvard style, table and layout checks, table formatting, anonymization, data statements, cover letters, mock reviews, and reviewer responses, even if the user just says "get this ready for ASR" or "submit to Demography".
+description: Prepare, polish, check, and revise manuscripts for major sociology and demography journals (American Sociological Review, American Journal of Sociology, Social Forces, Socius, European Sociological Review, British Journal of Sociology, Journal of Health and Social Behavior, Social Science & Medicine, SSM - Population Health, SSM - Mental Health, Sociology of Health & Illness, Demography, Population and Development Review, Population Research and Policy Review, Advances in Life Course Research, Social Science Research, Research in Social Stratification and Mobility, Sociological Methodology, Sociological Methods & Research, Sociology of Race and Ethnicity). Use for abstracts, highlights, keywords, word limits and trims, ASA/Chicago/APA/Harvard style, table and layout checks, table formatting, anonymization, data statements, cover letters, mock reviews, and reviewer responses, even if the user just says "get this ready for ASR" or "submit to Demography".
 ---
 
 # Sociology Journals Manuscript Prep
@@ -12,7 +12,7 @@ A toolkit for getting a manuscript ready for a sociology or demography journal, 
 Every run needs the manuscript (.docx, .pdf, or pasted text). Read it in full first. If it is a .docx, read it with tracked changes accepted (`pandoc file.docx -t plain --track-changes=accept --wrap=none`), since co-author edits are often still tracked.
 
 Confirm, inferring what you can and asking only about what is missing:
-1. **Journal** (see the journal reference below). For the SSM family, which journal: *Social Science & Medicine*, *SSM - Population Health*, *SSM - Mental Health*, *SSM - Qualitative Research in Health*, or *SSM - Health Systems*.
+1. **Journal** (see the journal reference below). For the SSM family, which journal: *Social Science & Medicine* (and which of its seven editorial offices), *SSM - Population Health*, or *SSM - Mental Health*.
 2. **Article type**, e.g., article, research note, brief report, comment, data visualization (Socius), review. (Annual Review of Sociology is invitation-only and not covered.)
 3. **Design**: quantitative, qualitative, mixed methods, computational, review. It changes the reporting expectations and data-sharing rules (several journals exempt interview and ethnographic data).
 4. **Stage**: first submission (several journals accept "format-free" first submissions: Social Forces, ESR) or final/accepted version (journal style required).
@@ -26,7 +26,7 @@ Present this menu so the author picks only what they need. Accept numbers, range
 **Preparing**
 1. Journal requirements card for the chosen journal and article type
 2. Abstract within the journal's limit and conventions
-3. Journal-specific extras: Highlights (Demography, SSM), Relevance to Demography statement, Data Availability / replication statement (ESR, Social Forces, SMR, PRPR, AJS data-openness statement), running head (JHSB)
+3. Journal-specific extras: Highlights (Demography; required at SSM and SSM-MH, encouraged at SSM-PH and ALCR), the SSM editorial office, Relevance to Demography statement, Data Availability / replication statement (ESR, Social Forces, SMR, PRPR, AJS data-openness statement), running head (JHSB)
 4. Keywords (count and rules per journal)
 5. Section order and completeness check
 
@@ -68,7 +68,7 @@ Tools (write each from the end of this file to the scratchpad before running; th
   python soc_count.py manuscript.docx --count text,notes,refs --text-limit 15000 --abstract-limit 200 --kw-min 4 --kw-max 5 --note-max 100 --authors "Surname1;Surname2"
   ```
   Parts: `text`, `abstract`, `notes` (a NOTES section plus Word footnotes/endnotes), `refs`, `appendix`, `tables`. The journal table gives each journal's `--count`. It reads tracked changes as accepted and treats long paragraphs before the first section as the introduction when there is no Introduction heading (JHSB and many sociology papers have none).
-- **Table checker** `table_check.py --style asa` for ASA journals and most sociology journals; `--style apa` for Demography, PRPR, SSM; add `--decimal-align` for JHSB.
+- **Table checker** `table_check.py --style asa` for ASA journals and most sociology journals; `--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
 - **Layout checker** `layout_check.py --journal <code>` (codes in the journal table; add `--blinded` for the anonymized file).
 - **Table formatter** `table_format.py --style asa|apa -o <name>_tables.docx [--decimal-align]`, only when the author asks (feature 6c).
 
@@ -84,17 +84,17 @@ Tools (write each from the end of this file to the scratchpad before running; th
 | European Sociological Review | esr | https://academic.oup.com/esr/pages/General_Instructions | verified |
 | British Journal of Sociology | bjs | https://lse.ac.uk/sociology/british-journal-of-sociology/notes-to-contributors (Wiley page also) | verified (LSE page) |
 | Journal of Health and Social Behavior | jhsb | https://journals.sagepub.com/author-instructions/HSB | verified |
-| Social Science & Medicine; SSM - Population Health, SSM - Mental Health, SSM - Qualitative Research in Health, SSM - Health Systems | ssm | Elsevier "Guide for authors" page of each journal | confirm |
-| Sociology of Health & Illness | shi | https://onlinelibrary.wiley.com/page/journal/14679566/homepage/forauthors.html | confirm |
+| Social Science & Medicine; SSM - Population Health; SSM - Mental Health | ssm | https://www.sciencedirect.com/journal/social-science-and-medicine/publish/guide-for-authors (and /ssm-population-health/, /ssm-mental-health/) | verified |
+| Sociology of Health & Illness | shi | https://onlinelibrary.wiley.com/page/journal/14679566/homepage/forauthors.html | verified |
 | Demography | demography | https://www.populationassociation.org/demography/for-authors/preparing-manuscripts and /editorial-policy | verified |
-| Population and Development Review | pdr | https://onlinelibrary.wiley.com/page/journal/17284457/homepage/forauthors.html | confirm |
+| Population and Development Review | pdr | https://onlinelibrary.wiley.com/page/journal/17284457/homepage/forauthors.html | verified |
 | Population Research and Policy Review | prpr | https://sda-demography.org/PRPR-journal/Preparing-Manuscripts and /Article-Types | verified |
-| Advances in Life Course Research | alcr | Elsevier "Guide for authors" | confirm |
+| Advances in Life Course Research | alcr | https://www.sciencedirect.com/journal/advances-in-life-course-research/publish/guide-for-authors | verified |
 | Social Science Research | ssr | Elsevier "Guide for authors" | confirm |
 | Research in Social Stratification and Mobility | rssm | Elsevier "Guide for authors" | confirm |
 | Sociological Methodology | smx | https://www.sagepub.com/docs/default-source/msg/SMX | verified |
 | Sociological Methods & Research | smr | https://www.sagepub.com/docs/default-source/msg/SMR | verified |
-| Sociology of Race and Ethnicity | sre | https://journals.sagepub.com/author-instructions/sre (plus the SRE Manuscript Preparation Guidelines PDF linked there) | verified (partial) |
+| Sociology of Race and Ethnicity | sre | https://journals.sagepub.com/author-instructions/sre (plus the SRE Manuscript Preparation Guidelines PDF linked there) | verified |
 
 Elsevier and Wiley author pages may block automated reading. If they can't be fetched, say so and ask the author to open the page or paste the relevant section; don't route around the block.
 
@@ -108,16 +108,18 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 | ESR [verified] | ~8,000 words including endnotes and references, excluding tables and figures | text,notes,refs | ≤200 words | required | author-year, year in parentheses: (Gans, 1962) | double-blind |
 | BJS [verified, LSE page] | ~8,000 words including abstract, notes, bibliography, appendices; research notes ≤2,500; review essays 5,000-5,500 | abstract,text,notes,refs,appendix | ≤300 words | 6 | Harvard: Smith, A.J. 1992 *Title*, London: Routledge. | double-blind |
 | JHSB [verified] | 10,000 words: all text, notes, references (title page gives the count excluding tables and figures); commentaries 3,000 | text,notes,refs | <150 words, must state sample size, design, data source | not stated | ASA 7 | anonymous; $25 fee (ASA student members exempt) |
-| Social Science & Medicine [confirm] | research articles commonly cited as 8,000-9,000 words including abstract, tables, references; reviews longer | abstract,text,tables,refs | structured (Rationale, Objective, Methods, Results, Conclusions) per one guide; confirm | confirm | Harvard (Elsevier) per one guide; confirm | double-blind; 3-5 Highlights ≤85 characters |
-| SSM journals [confirm] | see each journal's guide; open access with APCs | confirm | confirm | confirm | Elsevier | confirm |
-| Sociology of Health & Illness [confirm] | confirm on the Wiley page | confirm | confirm | confirm | Harvard-style author-date | confirm |
+| Social Science & Medicine [verified] | Research articles and critical reviews ≤9,000 words including abstract, tables, figures, references, and printed appendices (shorter preferred); systematic and scoping reviews ≤15,000; commentaries invited | abstract,text,tables,refs,appendix | ≤250 words, concise and factual (no required headings) | 1-7 | Elsevier name-date: (Allan and Jones, 2019); list "Van der Geer, J., Handgraaf, T., 2020. Title. J. Abbrev. 163, 51–59." | double-anonymized; 3-5 Highlights ≤85 characters required |
+| SSM - Population Health [verified] | Research articles ≤9,000 words including abstract, tables, figures, references; reviews ≤12,000 | abstract,text,tables,refs | ≤250 words | 1-7 | APA 7 | double-anonymized; Highlights and graphical abstract encouraged; open access (APC) |
+| SSM - Mental Health [verified] | Full-length articles ≤9,000 words including abstract, tables, figures, references; reviews ≤15,000; short communications 2,000-4,000; Practitioner's Corner ≤2,500 (invited); letters 400-750 without references | abstract,text,tables,refs | ≤250 words | 1-7 | Elsevier name-date (as SSM) | **single-anonymized**; Highlights required; open access (APC) |
+| Sociology of Health & Illness [verified] | Original articles ≤9,000 words including tables, figures, notes, and bibliography (each half-page table or figure counts as 250 words); review articles ≤8,000 excluding notes and bibliography; commentaries ≤2,500 (invited); book reviews ~800 | text,notes,refs (+250 per half-page table/figure) | 100-200 words, with its word count | not stated | Harvard: (Light 1998); list "Nettleton, S. and Burrows, R. (2003) Title, *Journal*, 23, 2, 165-185" | double-blind; self-citations as "Anon" |
 | Demography [verified] | Research articles 8,000 words of main text (excludes abstract, keywords, footnotes, acknowledgments); ≤8 tables + figures; ~75 references; online appendix up to 15 more tables/figures and 2,500 words. Research notes 4,000 / 4 / ~15. Commentaries 2,000 / 4 / ~15 | text | ≤200 words; plus 3-5 Highlights ≤85 characters each | ≤5 | APA-based with journal rules | external review; $50 submission fee (sole students exempt); $1,000 editorial fee on acceptance (waivers possible) |
-| PDR [confirm] | confirm on the Wiley page | confirm | confirm | confirm | confirm | confirm |
+| PDR [verified] | Research articles typically 8,000-10,000 words; Notes and Commentary and Data and Perspectives take shorter papers; long book reviews 1,500-2,000 (invited) | text,notes,refs | required (length not stated) | not stated | any consistent style at first submission (free format) | double-anonymized |
 | PRPR [verified] | Research articles 8,000-10,000 words of main text (excludes title, abstract, keywords, references, tables, figures, supplements); Brief Reports ≤3,500 and ≤5 tables/figures; Research Reviews ≤6,000 with exactly 3 tables/figures; Comments ≤3,000 (invited) | text | 150-250 words, one paragraph | 4-6 | APA 7 with PRPR rules | blinded title page in file |
-| ALCR, SSR, RSSM [confirm] | confirm on each Elsevier guide | confirm | confirm | confirm | Elsevier (confirm which) | confirm |
+| Advances in Life Course Research [verified] | no length limit stated | text | ≤250 words | 1-7 | APA 7 | double-anonymized; Highlights encouraged |
+| SSR, RSSM [confirm] | confirm on each Elsevier guide | confirm | confirm | confirm | Elsevier (confirm which) | confirm |
 | Sociological Methodology [verified] | generally ≤10,000 words | text,notes,refs (confirm) | 150-200 words | 4-5 | ASA 7 | anonymous; $25 fee (ASA student members exempt) |
 | SMR [verified] | no fixed limit; typical ~10,000 words; ≤6 main-text tables/figures; title ≤20 words | text | ≤150 words, no parenthetical citations | not stated | ASA (datasets in DataCite style with DOI, repository, version) | double-anonymized |
-| Sociology of Race and Ethnicity [verified, partial] | full-length article limit not on the author page (see the SRE Manuscript Preparation PDF); Pedagogy 2,500-3,000 including references and footnotes | confirm | confirm | confirm | ASA 7 | anonymous |
+| Sociology of Race and Ethnicity [verified] | ≤10,000 words including abstract, text, notes, references, tables, figures, and appendices (Pedagogy section ≤3,000); over-length papers are rejected | abstract,text,notes,refs,tables,appendix | <250 words: problem, theoretical and methodological approach, key findings | required (number not stated) | ASA | anonymous |
 
 ### Journal notes
 
@@ -135,13 +137,17 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 
 **Journal of Health and Social Behavior [verified].** 10,000 words (title page reports a word count covering text, notes, and references, excluding tables and figures); commentaries ≤3,000. Abstract <150 words and must state **sample size, design, and data source**. Anonymized title page: title, total word count, number of tables, number of figures, and a **running head <55 characters**; author names, acknowledgments, and grants added only at acceptance (title footnote marked with an asterisk). Times New Roman 12, double spaced throughout, ≥1-inch margins. Text starts on a new page with the full title, **no Introduction heading**; headings Background, Data and Methods, Results (or Findings), Discussion, References; generally 3 levels. Notes: superscript numerals in a separate NOTES section before the references; **don't use Word's note function**. Order after the text: notes, references, tables, figures, appendices, each in its own section. Tables each on a separate page with "Table 1 about here" placeholders, no abbreviations for variable names or headings, **align numbers by decimal**, "Note:" and a, b, c notes, \*p < .05, \*\*p < .01, \*\*\*p < .001 with one- or two-tailed stated. Figures in black ink, legible at 2-9/16 or 5-5/16 inch width, no abbreviations. $25 fee.
 
-**Social Science & Medicine and SSM journals [confirm].** The official Elsevier guides could not be read in October 2026. A widely used author guide for SSM (UConn SHARP lab) lists: research articles ≤9,000 words with abstract, tables, and references counted; reviews ≤15,000; structured abstract (Rationale, Objective, Methods, Results, Conclusions); 3-5 Highlights ≤85 characters in a separate file; double-blind (remove self-identifying citations, registry numbers, and the IRB's name; say "the IRB at the first author's university"); **page and line numbers**; **no footnotes or endnotes**; left justification; APA-like heading levels; Harvard references; tables with horizontal rules only above and below headings and at the bottom, no shading; a Limitations subsection. The SSM journals (Population Health, Mental Health, Qualitative Research in Health, Health Systems) are open access with their own guides; they share Elsevier conventions but limits differ. Treat all of this as [confirm].
+**Social Science & Medicine [verified].** Choose one of seven **editorial offices** at submission: Medical Anthropology, Health Economics, Social Epidemiology, Health Psychology, Medical Sociology, Health Policy, or Health Geography. Each has its own scope (for example, Medical Sociology requires deep engagement with sociological theory and mainly takes qualitative work; Social Epidemiology mainly takes quantitative and mixed methods; Health Psychology requires psychological theory and is wary of cross-sectional self-report studies), so check fit before submitting. Qualitative papers should follow the SSM Guidelines for Qualitative Papers. Limits in the table. **Double-anonymized**: a separate title page (authors, affiliations, corresponding author's email, acknowledgments, which appear only there) and an anonymized manuscript with no identifying information in the text or supplements. Word (.docx) or LaTeX, single-column; a PDF is not an acceptable source file. Abstract ≤250 words, concise and factual, stating main findings with their statistical significance and the conclusions, with no undefined abbreviations and any cited reference given in full. 1-7 English keywords (avoid multiword phrases with "and" or "of"). **Highlights required**: 3-5 bullets, each ≤85 characters including spaces, in a separate editable file with "highlights" in the file name. Tables: editable text, not images; numbered in order of citation, cited in the text, caption above, notes below the body; **no vertical rules or shading**; don't duplicate results given elsewhere. Appendix items numbered Table A.1, Fig. A.1, Eq. (A.1). References: Elsevier name-date; in text (Allan, 2020a, 2020b; Allan and Jones, 2019), et al. for three or more; list alphabetical then chronological, journal names abbreviated per LTWA, with DOIs. **Generative AI declaration** in a new section before the references ("Declaration of generative AI and AI-assisted technologies in the manuscript preparation process"), plus disclosure in figure captions for AI-generated images. Data: Option C, so deposit data in a repository and cite it, or state why it can't be shared. Declaration of competing interests (Word file) and CRediT author statement. The official guide doesn't set font, spacing, margins, or page or line numbers; double spacing with page and line numbers is a sensible default.
 
-**Sociology of Health & Illness [confirm].** Wiley journal; the author page could not be read. Confirm length, abstract, keywords, referencing, and data policy on the Wiley page.
+**SSM - Population Health [verified].** Shares SSM's general approach and Elsevier conventions; welcomes replication studies, methodological studies, instrument validation, opinion pieces, and reviews. Limits in the table (reviews ≤12,000, not 15,000). **APA 7 references** (not the SSM name-date style). Highlights and a graphical abstract are encouraged, not required. Double-anonymized with a separate title page; abstract ≤250; 1-7 keywords; same table rules as SSM; Option C data; generative AI declaration as for SSM. Open access with an APC.
+
+**SSM - Mental Health [verified].** Social science of mental and behavioral health (medical anthropology and critical social science; psychiatric epidemiology and population mental health). Article types and limits in the table. **Single-anonymized** review, so the title page and author details can stay in the manuscript. Highlights required (3-5, ≤85 characters); graphical abstract encouraged. Abstract ≤250; 1-7 keywords; footnotes allowed but sparing, numbered consecutively; acknowledgments in a separate section just before the references (not on the title page or in a footnote). Elsevier name-date references as for SSM. Data: Option B (sharing encouraged). Same table rules and generative AI declaration as SSM. Open access with an APC.
+
+**Sociology of Health & Illness [verified].** Original articles (empirical or conceptual; literature reviews with systematic or narrative methods count here and must discuss the reviewed work conceptually) ≤9,000 words **including tables, figures, notes, and bibliography**, with each half-page table or figure counted as 250 words. Review articles (agenda-setting reviews of a field of medical sociology) ≤8,000 words excluding notes and bibliography; contact the co-chief editors first. Commentaries ≤2,500 (invited); book reviews ~800. Abstract 100-200 words that stands on its own, followed by its word count and a word count of the main body. **Double-blind**: remove names, affiliations, acknowledgments, ethics information, and other identifiers; replace self-citations with "Anon" in the text and the reference list; the main text is headed only by the title. Separate title page with word count, resubmission status, ethics approval, ORCID, co-author details, CRediT contributions, funding, **data availability statement** (required, even if data can't be shared), conflicts of interest, patient consent, and permissions. Harvard references: (Light 1998), Jameson (2005), et al. for more than two authors; list alphabetical, e.g., Nettleton, S. and Burrows, R. (2003) E-scaped medicine? Information, reflexivity and health, *Critical Social Policy*, 23, 2, 165-185. Notes few and brief, numbered in the text, placed at the end of the text before the bibliography. **Double line spacing**. House style: British spelling (-ise), no contractions except in verbatim transcripts, no sentence starting with a numeral, dates as 5 January 2003, shortest page ranges (22-4, 105-6), non-sexist language per the BSA guidelines. Generative AI use must be described in detail (tool, purpose, effect on arguments, how outputs were checked) in the Methods or acknowledgments. First-submission references can be in any consistent style, but revisions must follow journal format.
 
 **Demography [verified].** Limits in the table (main text excludes abstract, keywords, footnotes, acknowledgments). Abstract ≤200 words summarizing results and why they matter (population and methods only if they are the contribution); **3-5 Highlights**, complete sentences ≤85 characters; ≤5 keywords; a **Relevance to Demography statement** (editors only) and a pre-submission author attestation form. Order: title, highlights, abstract, keywords, main text, references, tables and figures. Double spaced, 12 pt, 1-inch margins, left aligned (not justified), **page numbers from the title page**. Headings in title case, unnumbered, starting with "Introduction": primary bold 14 pt, secondary bold 12 pt, tertiary italic 12 pt; subheads only when there are two or more. Numbers: spell out one through nine; numerals for 10 and above, ages, and millions; leading zero for values that can exceed 1; en dashes for ranges; Merriam-Webster spelling. References APA-based: (Author Year) with no comma, et al. for three or more, page numbers for quotations, hanging indent, DOIs for online-only journals; don't cite sources in footnotes; **no endnotes**. Tables: each on its own page at the end, title-case column headings, horizontal rules only; notes in the order general notes, sources, lettered notes, significance markers; **CIs or SEs strongly encouraged and asterisks discouraged**. Figures: separate EPS or PDF ≥300 dpi, sans-serif ≥6 pt, title beneath the figure, colorblind-friendly, **alt text** (~200 characters); refer to panels as "panel a of Figure 1". Online appendix as a separate PDF (Table A1, Figure A1), with its own reference list. Accepted papers need a Reproducibility and Data Availability statement. Preprints allowed (tell the office; don't update during review).
 
-**Population and Development Review [confirm].** Wiley journal (Population Council); author page could not be read. Article types include research articles, notes and commentaries, data and perspectives, archives, book reviews, and documents. Confirm everything on the Wiley page.
+**Population and Development Review [verified].** Population Council journal published by Wiley. Papers typically run 8,000-10,000 words. Sections open to submissions: **Research Articles** (theory and application, policy analysis, sociographic studies, critical assessments of research; most papers), **Notes and Commentary** (current population questions and policy), and **Data and Perspectives** (new statistics and their interpretation); the last two take shorter papers. Long book reviews (1,500-2,000 words) and review essays are invited. **Free-format first submission**: one file or several, with abstract, introduction, methods, results, and conclusions; figure and table legends; any consistent reference style. **Double-anonymized**: anonymize the manuscript (papers that reveal authorship aren't sent for review) and give a separate title page with data availability, funding, conflict of interest, ethics approval, patient consent, and permission statements. Confirm authorship in the cover letter. A data availability statement is published with every accepted paper. **AI disclosure** (Wiley): in the acknowledgments for drafting, editing, translation, or formatting help; in the Methods for research uses; in figure captions for generated or edited visuals. Revised papers must follow journal formatting.
 
 **Population Research and Policy Review [verified].** Detailed, strict house style (manuscripts lacking it are returned):
 - Main file starts with a **de-identified title page**: 14-pt bold title, "Abstract" heading, abstract, keywords (bold italic label); no author information, running head, JEL codes, or declarations; page break; text starts on page 2. Blinded self-citations as "(Blinded for Review)", omitted from the reference list.
@@ -155,13 +161,15 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 - Either an Appendix (in the main file, ≤2 pages, items numbered with the main text) or an Online Supplement (separate file titled ONLINE SUPPLEMENT, items Table S1...), not both.
 - Declarations entered in the submission system only: author contributions (CRediT, even for sole authors), competing interests, ethics approval (suggested wording for public de-identified data: "This study used de-identified publicly available data and thus it was exempt from institutional ethics approval."), data availability, funding.
 
-**Advances in Life Course Research, Social Science Research, Research in Social Stratification and Mobility [confirm].** Elsevier journals; guides could not be read. Elsevier journals typically ask for highlights, keywords, a declaration of interests, CRediT author statements, a data statement, and a generative-AI declaration in a separate section before the references; confirm each on the journal's guide.
+**Advances in Life Course Research [verified].** Interdisciplinary life course research: empirical, theoretical, methodological, and review articles on events, transitions, or whole life segments. No word limit or article-type list in the guide. **Double-anonymized** with a separate title page; abstract ≤250 words; 1-7 keywords; Highlights encouraged (3-5, ≤85 characters); **APA 7 references**; tables editable, no vertical rules or shading, notes below; Option B data (sharing encouraged); Elsevier generative AI declaration before the references; CRediT and competing-interest declarations.
+
+**Social Science Research, Research in Social Stratification and Mobility [confirm].** Elsevier journals; guides not yet read. They likely follow the same Elsevier conventions as ALCR (abstract ≤250, 1-7 keywords, Highlights, generative AI declaration, CRediT), but confirm limits and reference style on each journal's guide.
 
 **Sociological Methodology [verified].** Generally ≤10,000 words. Abstract 150-200 words without identifying information; 4-5 keywords on the title page. Blinded manuscript; third-person self-citation. Double spaced throughout, Times New Roman 12, **1.25-inch margins**, Word or LaTeX (with PDF), generally 3 heading levels, editable equations. ASA 7; REFERENCES alphabetical, all authors listed, DOIs for datasets. Tables in Word or Excel with significance asterisks (one- or two-tailed stated); figures in grayscale. Notes in a separate ENDNOTES section, each ≤100 words. Lettered appendices. $25 fee.
 
 **Sociological Methods & Research [verified].** No target length (typical ~10,000 words); ≤6 essential tables/figures in the main text; title ≤20 words; abstract ≤150 words without parenthetical citations. Double-anonymized: third-person self-citation, or "(Author(s), date)" with an entry alphabetized under "A"; replace IRB and funding details with "[Anonymized for peer review]". Double spaced, 12 pt, **1.25-inch margins**, **footnotes only (no endnotes)**; Word, LaTeX (Overleaf template), or PDF. ASA references; datasets in DataCite style with DOI, repository, and version; incomplete references are returned. Tables: label and title above, notes below; figures: label and title below; readable in greyscale, colorblind-friendly. Online supplement as separate PDFs named "ONLINE SUPPLEMENT". **Anonymized code and materials required at submission** (anonymous repository link preferred), an **availability statement** required, open data and code in a trusted repository before acceptance ("upon request" not accepted), and a **preregistration statement** for all manuscripts (preregistration mandatory for new RCT submissions from July 2026). Generative AI allowed for readability, **disclosed in the backmatter** with the tool and purpose; no statement needed if none was used.
 
-**Sociology of Race and Ethnicity [verified, partial].** ASA journal; ASA Style Guide 7 governs, with an SRE Manuscript Preparation Guidelines PDF linked from the author page (read it for the full-length article limits). Personal acknowledgments supplied separately for anonymous review. Funding under a separate heading (with the standard "no specific grant" wording if none); a conflict-of-interest declaration encouraged. AI tools can't be authors (Sage policy). Pedagogy articles 2,500-3,000 words including references and footnotes.
+**Sociology of Race and Ethnicity [verified].** ASA section journal (Sage); papers that break the length or format rules are **rejected**. ≤10,000 words **including abstract, text, notes, references, tables, figures, and appendices**; Pedagogy section ≤3,000 (long or landscape tables may prompt a request to cut). **Double spaced throughout** (notes and references included), **Times New Roman 12**, margins **1 to 1.5 inches**, .doc or .docx. Abstract <250 words covering the research problem, theoretical and methodological approach, and key findings and arguments. Text starts on a **new page headed by the full title**; then, in order, Notes, References, tables, figures, appendices. Generally three heading levels. Anonymized: cite your own work in the third person ("Smith (1992) concluded"); blind or remove working papers. ASA citations as in the style reference. **Notes** in a separate NOTES section after the text, superscript numerals, and **don't use Word's footnote function**. REFERENCES: complete, all authors listed (no et al.), first names and middle initials, repeated names given in full. **Tables**: each on a separate page with "Table 1 about here" in the text; descriptive title; no abbreviated variable names or headings; **align numbers by decimal**; "Note:" plus a, b, c notes; \*p < .05, \*\*p < .01, \*\*\*p < .001 with one- or two-tailed stated; editable, not images. Figures in black ink, no abbreviations, legible at 2-9/16 or 5-5/16 inches wide. Appendices lettered with titles ("APPENDIX A. Variable Names and Definitions"). Separate title page (title, short title, abstract, keywords, author names, emails, mailing addresses, affiliations, bios, acknowledgments); a cover letter with author bios uploaded as a supplementary file. Revisions: no highlighted, colored, or bold text, and the response letter is anonymous and pasted into the portal. Personal acknowledgments and funding (with the "no specific grant" wording if none) go on the title page; AI tools can't be authors (Sage).
 
 ## Style reference
 
@@ -181,22 +189,24 @@ Elsevier and Wiley author pages may block automated reading. If they can't be fe
 - Social Forces: Chicago 17 author-date. (Author Year) with no comma; page numbers only for quotations or specific notes or tables; et al. for more than three authors; 1975a, 1975b; reference list alphabetical with first names spelled out.
 - AJS house style: author-date; headline-style capitalization; article and chapter titles in quotation marks; comma before "and" for three authors in the list; web pages cited in notes with access dates; inclusive page numbers for chapters.
 
-### APA-based (Demography, PRPR; SSM tables)
+### APA-based (Demography, PRPR, SSM - Population Health, ALCR; SSM tables)
 - Demography: (Author Year) without comma; et al. for three or more; numbers rule as in the Demography note; no endnotes.
 - PRPR: APA 7 with the PRPR rules above (DOIs as hyperlinks; single-spaced reference list).
 - APA statistics conventions apply in tables: italic statistical symbols, no leading zero for values that can't exceed 1, exact p values (p < .001 floor).
 
-### Harvard (BJS, ESR variant, SSM per secondary guide)
+### Harvard and Elsevier name-date (BJS, SHI, ESR variant, SSM, SSM - Mental Health)
 - BJS: Riley (1983) in text; et al. for four or more authors; bibliography entry "Smith, A.J. 1992 *Sociology Today*, London: Routledge." Repeat author names; no ibid.
 - ESR: (Gans, 1962), with a comma and the year in parentheses in the list.
+- SHI: (Light 1998), et al. for more than two authors; "Nettleton, S. and Burrows, R. (2003) Title, *Journal*, 23, 2, 165-185"; British spelling.
+- SSM and SSM - Mental Health (Elsevier name-date): (Allan, 2020a, 2020b; Allan and Jones, 2019), with a comma before the year and et al. for three or more; "Van der Geer, J., Handgraaf, T., Lupton, R.A., 2020. The art of writing a scientific article. J. Sci. Commun. 163, 51–59. https://doi.org/..."; journal names abbreviated per LTWA.
 
 ### Causal language (all journals)
 For observational designs, flag causal verbs and nouns ("led to", "caused", "resulted in", "reduced", "increased", "effect of", "impact") and suggest "was associated with" or "the association between". If the design supports causal inference (experiments, natural experiments, fixed effects with stated assumptions, IV, RD, difference-in-differences, target trial emulation), check that the identification assumptions are stated instead. Look hardest at the abstract, highlights, and discussion.
 
 ### Table and number formatting (sociology)
-- Build tables with Word's table tool, never tabs or spaces; each value in its own cell; no vertical lines (Social Forces, Demography, PRPR, SSM state this); no shading.
+- Build tables with Word's table tool, never tabs or spaces; each value in its own cell; no vertical lines (Social Forces, Demography, PRPR, and the Elsevier journals state this); no shading (stated by the Elsevier journals).
 - Significance asterisks are standard in ASA journals (with one- or two-tailed stated) but **discouraged at Demography**, which prefers CIs or SEs. PRPR adds † for p < .10.
-- Decimal alignment: **required at JHSB** ("align numbers by decimal") and PRPR ("decimal tabs"); optional elsewhere. Use the table formatter's `--decimal-align`, which puts a decimal tab in each numeric cell. Keep decimal places consistent within a column.
+- Decimal alignment: **required at JHSB and SRE** ("align numbers by decimal") and PRPR ("decimal tabs"); optional elsewhere. Use the table formatter's `--decimal-align`, which puts a decimal tab in each numeric cell. Keep decimal places consistent within a column.
 - Standard errors in parentheses below or beside coefficients, stated in the note; give model fit statistics and N for each model.
 - Numbering: Arabic in most journals; **Roman numerals at BJS**; no 2a/2b at AJS (appendix tables A1, A2).
 - Placement: ASR, JHSB, PRPR, Demography want placeholders in the text ("Table 1 about here"); AJS and Social Forces (final) want tables at the end; Social Forces and ESR prefer inline at first submission.
@@ -215,9 +225,9 @@ Principles that apply to all of them:
 
 **2. Abstract.** Follow the journal's limit and any content rule (JHSB: sample size, design, data source; Demography: results and why they matter, methods only if they're the contribution; SMR: no parenthetical citations; ASR and Socius: purpose, methods, findings). No references unless allowed. Count words.
 
-**3. Journal-specific extras.** Highlights (Demography and SSM: 3-5 sentences, ≤85 characters each, including spaces; count characters). Relevance to Demography statement (editors only: why the paper matters to population studies). Data availability or replication statement (ESR, Social Forces, SMR, PRPR, Demography at acceptance; AJS data-openness and code statements at first submission). JHSB running head (<55 characters including spaces). Draft from the manuscript only.
+**3. Journal-specific extras.** Highlights (Demography, and SSM and SSM-MH where required; encouraged at SSM-PH and ALCR: 3-5 bullets, ≤85 characters each, including spaces; count characters; SSM wants them in a separate file named with "highlights"). SSM editorial office (recommend one of the seven from the paper's methods and theory). Relevance to Demography statement (editors only: why the paper matters to population studies). Data availability or replication statement (ESR, Social Forces, SMR, PRPR, Demography at acceptance; AJS data-openness and code statements at first submission). JHSB running head (<55 characters including spaces). Draft from the manuscript only.
 
-**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6). Avoid repeating title words where the journal says so (PRPR).
+**4. Keywords.** Respect the journal's count (ASR, Sociological Methodology 4-5; BJS 6; Demography ≤5; PRPR 4-6; SSM journals and ALCR 1-7, avoiding multiword phrases with "and" or "of"). Avoid repeating title words where the journal says so (PRPR).
 
 **5. Section order.** Check the journal's order and heading conventions (JHSB: no Introduction heading; PRPR required Level 1 headings; Demography starts with "Introduction"; ESR ≤2 subheading levels; ASR, JHSB, Soc Methodology ~3 levels; AJS order abstract, text, references, notes, tables, figures; BJS order text, appendices, notes, bibliography). Methods should cover data source and sample derivation, measures, missing data, and analytic strategy.
 
@@ -225,7 +235,7 @@ Principles that apply to all of them:
 
 **6b. Page layout and heading check.** Run `layout_check.py --journal <code>` (`--blinded` for the anonymized file). Report must-fix items marked "journal requirement" (e.g., ASR: remove page numbers; JHSB: no Word notes, no Introduction heading, text starts on a new page; PRPR: ALL CAPS Level 1, no line numbers, page numbers from the title page; Demography: left aligned, page numbers; Socius and ESR: page numbers; SSM: page and line numbers, no notes) and suggestions. Tell the author to resolve tracked changes and comments, and to clear file properties in the blinded file (Socius and ESR require it). Don't edit layout unless asked; if asked, edit a copy with the docx skill.
 
-**6c. Format my tables.** Only when asked. (1) Run the table checker and show the findings. (2) Suggest resolving tracked changes inside tables first. (3) Run `python table_format.py manuscript.docx --style asa -o <name>_tables.docx` (`--style apa` for Demography, PRPR, SSM), adding `--decimal-align` for JHSB and PRPR (or if the author wants it), and `--include-supplement` for appendix tables if wanted. (4) It sets horizontal rules only, removes shading and colored text, repeats the header row, and makes tracked fixes to P values (leading zeros, .000), minus signs, and comma separators; it never changes values, decimals, wording, or order. (5) Re-run the checker on the output and list what remains by hand (titles, note wording such as "Note:" vs *Note.*, one- or two-tailed statement, Roman numerals at BJS, asterisks at Demography). (6) Deliver the .docx and the change log.
+**6c. Format my tables.** Only when asked. (1) Run the table checker and show the findings. (2) Suggest resolving tracked changes inside tables first. (3) Run `python table_format.py manuscript.docx --style asa -o <name>_tables.docx` (`--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals), adding `--decimal-align` for JHSB, SRE, and PRPR (or if the author wants it), and `--include-supplement` for appendix tables if wanted. (4) It sets horizontal rules only, removes shading and colored text, repeats the header row, and makes tracked fixes to P values (leading zeros, .000), minus signs, and comma separators; it never changes values, decimals, wording, or order. (5) Re-run the checker on the output and list what remains by hand (titles, note wording such as "Note:" vs *Note.*, one- or two-tailed statement, Roman numerals at BJS, asterisks at Demography). (6) Deliver the .docx and the change log.
 
 **7. Consistency check.** Fact table (Ns through the sample derivation, descriptives, key coefficients and SEs or CIs, years) checked across abstract, highlights, text, tables, and figures. Recompute percentages from counts.
 
@@ -617,7 +627,7 @@ if __name__ == "__main__":
 
 ## Table checker
 
-Write this to the scratchpad as `table_check.py` before running it. Use `--style asa` for ASA journals and most sociology journals, `--style apa` for Demography, PRPR, and SSM; add `--decimal-align` for JHSB.
+Write this to the scratchpad as `table_check.py` before running it. Use `--style asa` for ASA journals and most sociology journals, `--style apa` for Demography, PRPR, SSM-PH, ALCR, and the SSM journals; add `--decimal-align` for JHSB and SRE.
 
 ```python
 #!/usr/bin/env python3
@@ -1062,25 +1072,26 @@ RULES.update({
     "asr": _soc("American Sociological Review", font="Times New Roman", size_src="req", font_src="req", double="req",
                 margins=1440, pagenum="none", word_notes="sug", newpage=["references"]),
     "jhsb": _soc("Journal of Health and Social Behavior", font="Times New Roman", size_src="req", font_src="req",
-                 double="req", margins=1440, word_notes="req", no_intro_heading=True,
+                 double="req", margins=(1440, 14400), margin_src="req", word_notes="req", no_intro_heading=True,
                  newpage=["text", "notes", "references", "tables"], each_table_page=True),
-    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", double="sug", margins=1440, word_notes="sug"),
+    "sre": _soc("Sociology of Race and Ethnicity", font="Times New Roman", size_src="req", font_src="req",
+                double="req", margins=(1440, 2160), margin_src="req", word_notes="req",
+                newpage=["text", "notes", "references", "tables"], each_table_page=True),
     "smx": _soc("Sociological Methodology", font="Times New Roman", size_src="req", font_src="req", double="req",
-                margins=1800, word_notes="sug"),
-    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800),
+                margins=1800, margin_src="req", word_notes="sug"),
+    "smr": _soc("Sociological Methods & Research", size_src="req", double="req", margins=1800, margin_src="req"),
     "socius": _soc("Socius", double="req", pagenum="req"),
     "ajs": _soc("American Journal of Sociology", sizes=(11, 12), size_src="req", double="req", margins=1440,
                 newpage=["references", "tables"]),
     "sf": _soc("Social Forces", newpage=["references", "tables"], each_table_page=True),
     "esr": _soc("European Sociological Review", double="req", pagenum="req"),
     "bjs": _soc("British Journal of Sociology", double="req", newpage=["references", "tables"], each_table_page=True),
-    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, pagenum="req",
-                       newpage=["references", "tables"], each_table_page=True),
+    "demography": _soc("Demography", size_src="req", double="req", ragged="req", margins=1440, margin_src="req",
+                       pagenum="req", newpage=["references", "tables"], each_table_page=True),
     "prpr": _soc("Population Research and Policy Review", size_src="req", double="req", ragged="req", margins=1440,
-                 pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
-    "ssm": _soc("Social Science & Medicine (and SSM journals)", ragged="req", pagenum="req", lines="req",
-                footnotes="req", apa_headings=True),
-    "shi": _soc("Sociology of Health & Illness"),
+                 margin_src="req", pagenum="req", lines="none", caps_l1=True, newpage=["text", "references", "tables"], each_table_page=True),
+    "ssm": _soc("Social Science & Medicine (and SSM journals)"),
+    "shi": _soc("Sociology of Health & Illness", double="req"),
     "pdr": _soc("Population and Development Review"),
     "alcr": _soc("Advances in Life Course Research", pagenum="sug", lines="sug"),
     "ssr": _soc("Social Science Research", pagenum="sug", lines="sug"),
@@ -1279,7 +1290,9 @@ def main():
         mar = sp.find(W + "pgMar")
         if mar is not None and rules["margins"]:
             vals = {k: int(mar.get(W + k, 0)) for k in ("top", "bottom", "left", "right")}
-            if any(abs(v - rules["margins"]) > 20 for v in vals.values()):
+            m = rules["margins"]
+            lo, hi = (m if isinstance(m, tuple) else (m, m))
+            if any(v < lo - 20 or v > hi + 20 for v in vals.values()):
                 margins_bad.append(", ".join(f"{k} {v / 1440:.2f} in" for k, v in vals.items()))
         if sp.find(W + "lnNumType") is not None:
             lnnum = True
@@ -1288,7 +1301,12 @@ def main():
     if sizes:
         add("Page setup", "Paper size: " + ", ".join(f"{k} ({v} section{'s' if v > 1 else ''})" for k, v in sizes.items()) + ". US Letter or A4 are both accepted by these journals.")
     if margins_bad:
-        add("Page setup", f"Margins are not 1 inch on every side: {margins_bad[0]}.", "req" if a.journal == "jgb" else "sug")
+        m = rules["margins"]
+        lo, hi = (m if isinstance(m, tuple) else (m, m))
+        want = (f"{lo / 1440:g} inch" if lo == hi else f"at least {lo / 1440:g} inch" if hi >= 14400
+                else f"between {lo / 1440:g} and {hi / 1440:g} inches")
+        add("Page setup", f"Margins should be {want} on every side; found {margins_bad[0]}.",
+            "req" if a.journal == "jgb" or rules.get("margin_src") == "req" else "sug")
     if lnnum and rules["lines"] == "none":
         add("Page setup", f"Line numbering is on. {rules['name']} asks for no line numbering; turn it off (Layout > Line Numbers > None).", "req")
     elif not lnnum and rules["lines"] in ("req", "sug"):
@@ -1421,8 +1439,6 @@ def main():
             real = [f for f in x if f.get(W + "type") not in ("separator", "continuationSeparator", "continuationNotice")]
             if real and rules.get("word_notes"):
                 add("Structure", f"{len(real)} Word {label}(s) found. {rules['name']} wants notes typed in a separate NOTES section after the text (superscript numbers in the text), not Word's built-in note function.", rules["word_notes"])
-            elif real and rules["footnotes"] == "req" and a.journal == "ssm":
-                add("Structure", f"{len(real)} {label}(s) found. Social Science & Medicine doesn't allow footnotes or endnotes; move the content into the text.", "req")
             elif real and rules["footnotes"] == "req":
                 add("Structure", f"{len(real)} {label}(s) found. GSA journals don't allow footnotes or endnotes; move them to an \"Author Notes\" section (PPAR allows up to 5 short endnotes).", "req")
             elif real:
