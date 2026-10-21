@@ -18,7 +18,7 @@ A *skill* is a set of instructions that Claude loads when it's relevant. Once in
 Each skill covers the whole path from draft to accepted paper:
 
 - **Preparing:** a requirements card for your journal and article type; an abstract generated automatically from your manuscript's content, with the journal's required headings and word limit; Key Points (JAMA) or keywords and the Translational Significance statement (GSA), also drafted from your content; and a section-order check
-- **Polishing:** AMA or APA style, number consistency across abstract, text, and tables, causal-language checks for observational designs, and a light clarity edit in your own voice
+- **Polishing:** AMA or APA style, table and number formatting (an automatic table checker), number consistency across abstract, text, and tables, causal-language checks for observational designs, and a light clarity edit in your own voice
 - **Fitting the limits:** an exact word-count dashboard, trim-to-fit suggestions with every cut tracked, and ideas for what to move to the supplement
 - **Submitting:** reporting-guideline mapping (STROBE, CONSORT, PRISMA, and others), reference checks, title page and required statements, an anonymization check for blinded files (GSA), cover letter, and a mock peer review
 - **Revising:** a point-by-point response-to-reviewers table, and retargeting to another journal after a rejection
@@ -27,6 +27,7 @@ Each skill covers the whole path from draft to accepted paper:
 
 - **Fewer desk rejections for format.** Word limits, missing Key Points, wrong abstract headings, ageist terms, or a missing Data Availability statement can get a paper returned before review. The skill checks all of these against current rules.
 - **Accurate word counts.** The built-in counter applies each journal's own definition of what counts: main text only (JAMA, JGB, *The Gerontologist*, *Innovation in Aging*), title page and abstract included (JGA), or references included (PPAR). It also counts tracked changes from co-authors as accepted, which Word's own counter on a draft with unaccepted changes won't do.
+- **Tables checked cell by cell.** A built-in table checker flags vertical lines, shading, values lined up with tabs or stacked with line breaks, empty cells, mixed decimal places, percentages with decimals in small groups (JAMA), hyphens used as minus signs, ±, P values like 0.001 or .000, and symbol footnote markers, following AMA (JAMA, JGA) or APA (JGB, *The Gerontologist*, *Innovation in Aging*, PPAR) conventions.
 - **Your voice stays yours.** Edits and trims cut redundancy before rewriting, reuse your own phrasing, and come with a change log or Word comments, so you accept or reject each change.
 - **Nothing invented.** Abstracts, Key Points, and responses are built only from what's in your manuscript or what you say. Missing details become placeholders like `[CI NEEDED]`, never made-up numbers.
 - **Pick only what you need.** Each run starts with a menu grouped by stage, so a quick abstract check doesn't turn into a full review.
@@ -85,9 +86,9 @@ To share them with a project team instead, copy them into `.claude/skills/` insi
 >
 > **Trim suggestions:** 14 Word comments saving about 450 words, each with replacement text built from your own sentences.
 
-## The word counters (optional, no Claude needed)
+## The word counters and table checker (optional, no Claude needed)
 
-The counters are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3 and `lxml` (`pip install lxml`).
+These tools are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3 and `lxml` (`pip install lxml`).
 
 ```bash
 # JAMA Network Original Investigation
@@ -103,7 +104,14 @@ python scripts/gsa_count.py manuscript.docx --mode text+front --text-limit 5200
 python scripts/gsa_count.py blinded.docx --text-limit 6000 --statement-limit 100 --authors "Surname1;Surname2"
 ```
 
-They detect sections from standard headings, so check the "Sections found" line in the output. If a draft has no Introduction heading, the long paragraphs before Methods are counted as the Introduction.
+```bash
+# Table formatting check: AMA for JAMA Network, APA for JGB / The Gerontologist / Innovation in Aging / PPAR
+python scripts/table_check.py manuscript.docx --style ama
+python scripts/table_check.py manuscript.docx --style apa
+python scripts/table_check.py manuscript.docx --style ama --allow-asterisks   # JGA
+```
+
+The counters detect sections from standard headings, so check the "Sections found" line in the output. If a draft has no Introduction heading, the long paragraphs before Methods are counted as the Introduction.
 
 ## Main limits at a glance (checked October 2026)
 
@@ -125,6 +133,7 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 - **Disclose AI use.** JAMA Network and GSA journals require you to disclose use of AI tools in preparing a manuscript (GSA journals: in the Methods; JAMA: per the journal's policy). You remain responsible for all content. The skill reminds you once per session when it writes or edits text.
 - **References are checked, not written.** JAMA Network asks authors not to use AI to generate or format references. The skill reports problems and points you to your reference manager (for example, switching the Zotero style to AMA 11th or APA 7th).
 - **Some article types prohibit AI drafting.** For example, JAMA Internal Medicine doesn't allow AI to draft Viewpoints, Inside Story pieces, or Letters to the Editor. Check before using the drafting features on opinion pieces.
+- **Decimal alignment isn't required.** JAMA Network aligns table columns in production and asks authors not to line up numbers with tabs or spaces; APA and the GSA journals center cell entries and don't require decimal alignment. What reviewers and editors do notice is inconsistent decimal places, which the table checker flags.
 - **Your science stays your call.** When a check finds a substantive issue (an outcome missing from the abstract, a mismatch between Methods and Results), the skill raises it as a question instead of changing your conclusions.
 - **Unpublished data.** Your manuscript is processed by Claude. Check your institution's and funder's policies on sharing unpublished work with AI tools, and your data use agreements (for example, for restricted survey data).
 - **Not affiliated** with the American Medical Association, JAMA Network, the Gerontological Society of America, or Oxford University Press. Journal names are used only to describe compatibility.
@@ -133,11 +142,12 @@ Journals revise their rules. **Each time it runs, the skill fetches the journal'
 
 ```
 skills/
-  jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes the word counter)
-  gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes the word counter)
+  jama-manuscript-prep/SKILL.md   JAMA Network skill (self-contained; includes the word counter and table checker)
+  gsa-manuscript-prep/SKILL.md    GSA journals skill (self-contained; includes the word counter and table checker)
 scripts/
   jama_count.py                   standalone JAMA word counter
   gsa_count.py                    standalone GSA word counter
+  table_check.py                  standalone table formatting checker (AMA or APA)
 dist/
   jama-manuscript-prep.zip        ready to upload to Claude
   gsa-manuscript-prep.zip         ready to upload to Claude
