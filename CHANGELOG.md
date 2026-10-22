@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1 (2026-10-22)
+
+- Added `requirements.md` and `requirements.txt` (Python 3.8+, lxml). `table_format.py` no longer needs Python 3.12 (an f-string used a backslash).
+- Added `examples/`: a fictional gerontology manuscript, the formatter's output, its change log, and before/after images of the abstract and tables used in the README.
+- Table formatter: standard errors in parentheses, P values without a leading zero (.002), and other numeric cells are now decimal-aligned; one tab position per column so values line up; cells like "721 (69.9)" are left as they were and listed in the log.
+- Table checker, layout checker, formatter: text such as "Table 1 shows..." is no longer read as a table title (affected the "titles but only N tables" warning and page-break checks).
+
 ## 1.4.0 (2026-10-21)
 
 - Sociology skill: verified Social Science & Medicine (seven editorial offices, ≤9,000 words all-inclusive, abstract ≤250, 1-7 keywords, required Highlights, Elsevier name-date references, table rules), SSM - Population Health (reviews ≤12,000, APA 7, Highlights encouraged), SSM - Mental Health (article types incl. short communications and letters, single-anonymized), Sociology of Health & Illness (≤9,000 incl. notes and bibliography, 250 words per half-page table, 100-200-word abstract, Harvard, British spelling, double spacing), Population and Development Review (sections, free-format submission, AI disclosure), Advances in Life Course Research (APA 7, abstract ≤250), Social Science Research (no word limit, numbered references, out-of-scope list: qualitative, descriptive, theoretical, review, research notes, policy evaluations), Research in Social Stratification and Mobility (APA 7, 1-6 keywords, required Highlights), and Sociology of Race and Ethnicity (≤10,000 all-inclusive, TNR 12, 1-1.5-inch margins, no Word footnotes, decimal-aligned tables). Dropped SSM - Qualitative Research in Health and SSM - Health Systems. Removed unofficial SSM rules (structured abstract, required line numbers, no footnotes).

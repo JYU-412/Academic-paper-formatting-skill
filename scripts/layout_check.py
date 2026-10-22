@@ -31,6 +31,9 @@ import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
+# A table title: "Table 1", "Table 1.", "Table 1: ...", or "Table 1 Sample ..." (not "Table 1 shows ...")
+CAPTION_RE = r'''^(?i:e?table)\s*[A-Z]?\d+(?:\s*$|\s*[.:|—–-]|\s+(?=[A-Z(“"']))'''
+
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 R = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
 
@@ -489,7 +492,7 @@ def main():
             for key, pat in SECTION_PATTERNS.items():
                 if key not in found_sections and re.fullmatch(pat, low):
                     found_sections[key] = idx
-            if re.match(r"^table\s*\d+\b", low):
+            if re.match(CAPTION_RE, t) and not t.lower().startswith("e"):
                 caption_idx.append(idx)
         if kind == "tbl" and first_table_idx is None:
             first_table_idx = idx

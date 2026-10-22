@@ -13,6 +13,12 @@ Three free [Claude skills](https://support.claude.com/en/articles/12512180-use-s
 
 ## What's new
 
+**October 22, 2026**
+
+- **Before-and-after example:** see the abstract writer, the checks, and the table formatter at work on a fictional gerontology paper (below).
+- **Requirements file:** [requirements.md](requirements.md) lists the Python version (3.8+) and the one dependency (lxml), for anyone running the scripts or adapting the skills for their own agent setup.
+- **More accurate table handling:** standard errors in parentheses now line up on the decimal point, and sentences such as "Table 1 shows…" are no longer mistaken for table titles.
+
 **October 21, 2026**
 
 - **New sociology and demography skill** for 20 journals, including ASR, AJS, Social Forces, JHSB, Demography, PRPR, the SSM journals, and Sociology of Race and Ethnicity. Every journal's rules were checked against its own author guide.
@@ -101,9 +107,31 @@ To share them with a project team instead, copy them into `.claude/skills/` insi
 >
 > **Trim suggestions:** 14 Word comments saving about 450 words, each with replacement text built from your own sentences.
 
+### Example: before and after
+
+A fictional gerontology paper (invented data, written to include common problems) prepared for *JGB Social Sciences*.
+
+**Abstract, generated from the paper's content.** The original abstract was over the limit, had no headings, and reported results that appear nowhere in the paper. The new one uses JGB's headings, reports the main estimates with their uncertainty, matches the observational design, and draws every fact from the paper.
+
+![Abstract before and after](examples/abstract_before_after.png)
+
+**Tables, formatted on request.** The table formatter rebuilt both tables in journal style: horizontal rules only, no shading or colored text, P values like `0.000` changed to `<.001`, true minus signs, thousands separators, and numbers lined up on the decimal point, including the standard errors in parentheses.
+
+![Tables before and after the table formatter](examples/tables_before_after.png)
+
+The checks on the same file also flagged what the formatter leaves to you:
+
+> **Word count:** abstract 258 words, over the 250-word limit by 8; main text within the limit.
+>
+> **Page layout (journal requirements):** Calibri 11 instead of Times New Roman 12; single instead of double spacing; 0.75-inch margins instead of 1 inch; abstract, references, and each table not starting on a new page.
+>
+> **Tables:** mixed decimal places in the same column (75.31 next to 2.3); empty cells to fill with an em dash; APA table titles (bold number on one line, italic title on the next).
+
+Files: [before](examples/demo_before.docx), [after, with tracked changes](examples/demo_tables_after.docx), and the [change log](examples/demo_tables_after.changes.md).
+
 ## The word counters, checkers, and table formatter (optional, no Claude needed)
 
-These tools are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3 and `lxml` (`pip install lxml`).
+These tools are embedded in each `SKILL.md`, and also provided as standalone Python scripts in [`scripts/`](scripts) for anyone who wants a quick check. They need Python 3.8 or later and `lxml` (`pip install -r requirements.txt`); see [requirements.md](requirements.md).
 
 ```bash
 # JAMA Network Original Investigation
@@ -186,10 +214,13 @@ scripts/
   table_check.py                  standalone table formatting checker (AMA or APA)
   layout_check.py                 standalone page layout and heading checker
   table_format.py                 standalone table formatter (writes a new file)
+examples/                       fictional demo manuscript, before and after
 dist/
   jama-manuscript-prep.zip        ready to upload to Claude
   gsa-manuscript-prep.zip         ready to upload to Claude
   sociology-manuscript-prep.zip   ready to upload to Claude
+requirements.md                 Python version and dependencies
+requirements.txt                for pip install -r
 CHANGELOG.md
 LICENSE
 ```

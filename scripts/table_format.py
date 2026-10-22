@@ -44,6 +44,9 @@ import zipfile
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
+# A table title: "Table 1", "Table 1.", "Table 1: ...", or "Table 1 Sample ..." (not "Table 1 shows ...")
+CAPTION_RE = r'''^(?i:e?table)\s*[A-Z]?\d+(?:\s*$|\s*[.:|—–-]|\s+(?=[A-Z(“"']))'''
+
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 XML_SPACE = "{http://www.w3.org/XML/1998/namespace}space"
 PVAL_COL = re.compile(r"^\s*\*?p\*?\s*(value)?", re.I)
@@ -240,25 +243,38 @@ TABS_BEFORE = ("suppressAutoHyphens", "kinsoku", "wordWrap", "overflowPunct", "t
                "autoSpaceDN", "bidi", "adjustRightInd", "snapToGrid", "spacing", "ind", "contextualSpacing",
                "mirrorIndents", "suppressOverlap", "jc", "textDirection", "textAlignment", "textboxTightWrap",
                "outlineLvl", "divId", "cnfStyle", "rPr", "sectPr", "pPrChange")
-NUMERIC_CELL = re.compile(r"[\u2212\-<>]?\s*\d[\d,\u2009]*(\.\d+)?(\*{0,3})?(\s*[\(\[].*[\)\]])?\s*")
+# A number, a number with a parenthetical (mean (SD)), or a lone SE in parentheses: (0.03)
+NUMERIC_CELL = re.compile(r'''(?:[−\-<>]?\s*(?=[\d., ]*\d)(?:\d[\d, ]*)?(?:\.\d+)?\*{0,3}(?:\s*[\(\[].*[\)\]])?|[\(\[]\s*[−\-]?(?=[\d.,]*\d)(?:\d[\d,]*)?(?:\.\d+)?\s*[\)\]]\*{0,3})\s*''')
 
 
 def decimal_align(tbl, log, label):
     """Put a decimal tab in each numeric data cell so values line up on the decimal point."""
-    n = 0
+    n, skipped_int = 0, 0
     rows = tbl.findall(q("tr"))
     grid = [int(g.get(q("w"), 0)) for g in tbl.findall(f"{q('tblGrid')}/{q('gridCol')}")]
+    # one tab position per column, so every value in a column lines up; move it left of
+    # center when values in that column carry a trailing parenthetical, e.g. 74.2 (6.8)
+    trailing = set()
+    for ri, tr in enumerate(rows[1:], 1):
+        for ci, tc in enumerate(tr.findall(q("tc"))):
+            txt = cell_text(tc).strip()
+            if ci and NUMERIC_CELL.fullmatch(txt or "x") and re.search(r"\d\S*\s*[\(\[]", txt):
+                trailing.add(ci)
     for ri, tr in enumerate(rows):
         if ri == 0:
             continue
         for ci, tc in enumerate(tr.findall(q("tc"))):
             if ci == 0 or not NUMERIC_CELL.fullmatch(cell_text(tc).strip() or "x"):
                 continue
+            if re.match(r"[\u2212\-<>]?\s*\d[\d,\u2009]*\s*[\(\[][^\)\]]*\.", cell_text(tc).strip()):
+                # e.g. 721 (69.9): a decimal tab would align on the percentage's point, not the count
+                skipped_int += 1
+                continue
             tcw = tc.find(f"{q('tcPr')}/{q('tcW')}")
             width = int(tcw.get(q("w"), 0)) if tcw is not None and tcw.get(q("type")) == "dxa" else (grid[ci] if ci < len(grid) else 1440)
             txt = cell_text(tc).strip()
             # put the decimal point a little left of center when a parenthetical follows
-            pos = max(360, int(width * (0.40 if "(" in txt or "[" in txt else 0.50)))
+            pos = max(360, int(width * (0.40 if ci in trailing else 0.50)))
             for p in tc.findall(q("p")):
                 ppr = p.find(q("pPr"))
                 if ppr is None:
@@ -285,6 +301,8 @@ def decimal_align(tbl, log, label):
                     jc.set(q("val"), "left")
             n += 1
     log.append(f"- {n} numeric cell(s) aligned on the decimal point (decimal tab)")
+    if skipped_int:
+        log.append(f"- {skipped_int} cell(s) like \"721 (69.9)\" left as they were: a decimal tab would line up the percentage's decimal point instead of the count. Consider separate n and % columns, or align these by hand.")
 
 
 def format_layout(tbl, style, log, label):
@@ -449,15 +467,16 @@ def main():
                     walk(c)
     walk(body)
 
+    how = "applied directly" if a.no_track else 'tracked changes by "' + a.author + '"'
     log = [f"# Table formatting change log ({a.style.upper()} style)\n",
-           f"Source: `{src.name}`  \nOutput: `{dst.name}`  \nText changes are {'applied directly' if a.no_track else 'tracked changes by \"' + a.author + '\"'}; layout changes are applied directly and listed below.\n"]
+           f"Source: `{src.name}`  \nOutput: `{dst.name}`  \nText changes are {how}; layout changes are applied directly and listed below.\n"]
     in_supp, last_title, n_done, skipped_total = False, None, 0, 0
     for kind, node in items:
         if kind == "p":
             t = "".join(x.text or "" for x in node.iter(q("t"))).strip()
             if re.fullmatch(r"(supplement(ary|al)?( material| online content)?( \d+)?|emethods|eappendix)", t, re.I):
                 in_supp = True
-            if re.match(r"^e?table\s*\d+", t, re.I):
+            if re.match(CAPTION_RE, t):
                 last_title = t[:60]
             continue
         if in_supp and not a.include_supplement:

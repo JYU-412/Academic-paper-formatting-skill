@@ -24,6 +24,11 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
+# A table title: "Table 1", "Table 1.", "Table 1: ...", or "Table 1 Sample ..." (not "Table 1 shows ...")
+# A number, a number with a parenthetical (mean (SD)), or a lone SE in parentheses: (0.03)
+NUMERIC_CELL_RE = r'''(?:[−\-<>]?\s*(?=[\d., ]*\d)(?:\d[\d, ]*)?(?:\.\d+)?\*{0,3}(?:\s*[\(\[].*[\)\]])?|[\(\[]\s*[−\-]?(?=[\d.,]*\d)(?:\d[\d,]*)?(?:\.\d+)?\s*[\)\]]\*{0,3})\s*'''
+CAPTION_RE = r'''^(?i:e?table)\s*[A-Z]?\d+(?:\s*$|\s*[.:|—–-]|\s+(?=[A-Z(“"']))'''
+
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 NUM = re.compile(r"(?<![\w.])[−\-]?\d+(?:,\d{3})*(?:\.(\d+))?")
 PVAL_COL = re.compile(r"^\s*\*?p\*?\s*(value)?", re.I)
@@ -254,7 +259,7 @@ def check_table(idx, tbl, title, styles_root, style, allow_asterisks=False, deci
                 if ci == 0:
                     continue
                 txt = text_of(tc).strip()
-                if re.fullmatch(r"[\u2212\-<>]?\s*\d[\d,]*(\.\d+)?(\*{0,3})?(\s*\(.*\))?\s*", txt):
+                if re.fullmatch(NUMERIC_CELL_RE, txt):
                     numeric_cells += 1
                     if has_decimal_tab(tc):
                         aligned += 1
@@ -323,7 +328,7 @@ def main():
         if kind == "p":
             if re.fullmatch(r"(supplement(ary|al)?( material| online content)?( \d+)?|emethods|eappendix)", txt, re.I):
                 in_supp = True
-            if re.match(r"^(e?table)\s*\d+[.:]?\s", txt, re.I) or re.fullmatch(r"(e?table)\s*\d+[.:]?", txt, re.I):
+            if re.match(r"^(e?table)\s*\d+[.:]?\s", txt, re.I) and re.match(CAPTION_RE, txt) or re.fullmatch(r"(e?table)\s*\d+[.:]?", txt, re.I):
                 last_title, since_title = txt, 0
                 if not txt.lower().startswith("e"):
                     caption_titles.append(txt)
